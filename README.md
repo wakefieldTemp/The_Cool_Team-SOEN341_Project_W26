@@ -1,6 +1,6 @@
 # Project Name
 
-*(Name to be decided)*
+*MealMajor*
 
 ## Course Information
 **Course:** SOEN 341  
