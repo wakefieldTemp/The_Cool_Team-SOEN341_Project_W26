@@ -1,9 +1,9 @@
 <?php
 
 $host = "localhost";
-$user = "root";
-$password = "";
-$database = "users_db";
+$user = "ucuvhcnpfcavh";
+$password = "Concordi26-project";
+$database = "dby41clch96chw";
 
 $conn = new mysqli($host, $user, $password, $database);
 
