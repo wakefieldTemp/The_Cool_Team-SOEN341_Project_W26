@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Comfortaa", sans-serif;
+    font-weight: 800;
+    font-style: normal;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, rgb(195, 243, 189), rgb(112, 165, 81));
+    color: black;
+}
+
+h2 {
+    font-size: 75px;
+    background: linear-gradient(to bottom, rgb(104, 197, 104), rgb(46, 160, 46));
+    padding: 25px;
+    border-radius: 25px;
+    text-align: center;
+    position:relative;
+    top: -400px;
+    margin-bottom: 50px;
+    color: rgb(255, 255, 255);
+}
+
+.profile-name {
+    font-size: 25px;
+    text-align: center;
+    position: relative;
+    top: -425px;
+    margin-bottom: 20px;
+    color: rgb(6, 59, 9);
+}
+
+.profile-email {
+    font-size: 25px;
+    text-align: center;
+    position: relative;
+    top: -425px;
+    margin-bottom: 20px;
+    color: rgb(6, 59, 9);
+}
+
