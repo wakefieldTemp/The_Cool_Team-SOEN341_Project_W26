@@ -3,19 +3,18 @@ session_start();
 require_once 'login_page_config.php';
 $userId = $_SESSION['user_id'];
 
-// Pour Charles, tu va copier cette section la, mais utilsie les noms des tablse de preferences instead
 if(isset($_POST['add_allergy'])) {
     $allergy_name = trim($_POST['allergy_name']);
 
     $first_query = "SELECT allergy_id FROM allergies WHERE allergy = ?";
-    $first_stmt = $conn->prepare($first_query);
-    $first_stmt->bind_param('s', $allergy_name);
-    $first_stmt->execute();
-    $first_stmt->store_result();
+    $first_result = $conn->prepare($first_query);
+    $first_result->bind_param('s', $allergy_name);
+    $first_result->execute();
+    $first_result->store_result();
 
-    if($first_stmt->num_rows > 0){
-        $first_stmt->bind_result($allergy_id);
-        $first_stmt->fetch();
+    if($first_result->num_rows > 0){
+        $first_result->bind_result($allergy_id);
+        $first_result->fetch();
     } else {
         $insert_query = "INSERT INTO allergies (allergy) VALUES (?)";
         $insert_stmt = $conn->prepare($insert_query);
@@ -23,12 +22,25 @@ if(isset($_POST['add_allergy'])) {
         $insert_stmt->execute();
         $allergy_id = $conn->insert_id;
     }
+    $first_result->close();
+    $exist_query = "SELECT * FROM user_allergies WHERE user_id = ? AND allergy_id = ?";
+    $exist_result = $conn->prepare($exist_query);
+    $exist_result->bind_param('ii', $userId, $allergy_id);
+    $exist_result->execute();
+    $exist_result->store_result();
 
-    $first_stmt->close();
-    $second_query = "INSERT INTO user_allergies (user_id, allergy_id) VALUES (?, ?)";
-    $second_stmt = $conn->prepare($second_query);
-    $second_stmt->bind_param('ii', $userId, $allergy_id);
-    $second_stmt->execute();
+    if($exist_result->num_rows > 0){
+        $exist_result->close();
+        echo "<script>alert('Allergy already exists in your profile.');</script>";
+    }
+    else{
+        $exist_result->close();
+        $second_query = "INSERT INTO user_allergies (user_id, allergy_id) VALUES (?, ?)";
+        $second_result = $conn->prepare($second_query);
+        $second_result->bind_param('ii', $userId, $allergy_id);
+        $second_result->execute();
+    }
+
 }
 
 if(isset($_POST['delete_allergy'])) {
@@ -38,7 +50,6 @@ if(isset($_POST['delete_allergy'])) {
     $delete_stmt->bind_param('ii', $userId, $allergy_id);
     $delete_stmt->execute();
 }
-//************************************************************************************************** */
 
 $sql_query = "
     SELECT al.allergy_id, al.allergy
@@ -89,7 +100,6 @@ $preferences = $result->fetch_all(MYSQLI_ASSOC);
             echo "<p class='profile-name'> Name: " . $_SESSION['name'] . "</p>";
             echo "<p class='profile-email'> Email: " . $_SESSION['email'] . "</p>";
         ?>
-        <!-- Il y a aussi la section des inputs et buttons des allergies, legit jsute copy paste it over ce quil y a deja pour rpeferences, mais jsute change pour avoir les bons noms -->
         <div class="allergies-section">
         <table class="allergies-table">
             <thead>
@@ -136,6 +146,8 @@ $preferences = $result->fetch_all(MYSQLI_ASSOC);
                 </table>
             <?php endif; ?>
         </div>
+        <div class="back-button-container">
+            <button onclick="window.location.href='main_menu.php'">Back to Main Page</button>
     </div>
 </body>
 

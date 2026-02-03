@@ -48,3 +48,21 @@ h2 {
     color: rgb(6, 59, 9);
 }
 
+.back-button-container button{
+    position: fixed;
+    color: white;
+    top: 50px;
+    left: 50px;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: none;
+    background: linear-gradient(to bottom, rgb(104, 197, 104), rgb(46, 160, 46));
+}
+
+.back-button-container button:hover{
+    box-shadow: 0 0 15px 5px rgba(0, 128, 0, 0.6);
+    scale: 1.1;
+    cursor: pointer;
+}
+
