@@ -3,6 +3,43 @@ session_start();
 require_once 'login_page_config.php';
 $userId = $_SESSION['user_id'];
 
+// Pour Charles, tu va copier cette section la, mais utilsie les noms des tablse de preferences instead
+if(isset($_POST['add_allergy'])) {
+    $allergy_name = trim($_POST['allergy_name']);
+
+    $first_query = "SELECT allergy_id FROM allergies WHERE allergy = ?";
+    $first_stmt = $conn->prepare($first_query);
+    $first_stmt->bind_param('s', $allergy_name);
+    $first_stmt->execute();
+    $first_stmt->store_result();
+
+    if($first_stmt->num_rows > 0){
+        $first_stmt->bind_result($allergy_id);
+        $first_stmt->fetch();
+    } else {
+        $insert_query = "INSERT INTO allergies (allergy) VALUES (?)";
+        $insert_stmt = $conn->prepare($insert_query);
+        $insert_stmt->bind_param('s', $allergy_name);
+        $insert_stmt->execute();
+        $allergy_id = $conn->insert_id;
+    }
+
+    $first_stmt->close();
+    $second_query = "INSERT INTO user_allergies (user_id, allergy_id) VALUES (?, ?)";
+    $second_stmt = $conn->prepare($second_query);
+    $second_stmt->bind_param('ii', $userId, $allergy_id);
+    $second_stmt->execute();
+}
+
+if(isset($_POST['delete_allergy'])) {
+    $allergy_id = $_POST['allergy_id'];
+    $delete_query = "DELETE FROM user_allergies WHERE user_id = ? AND allergy_id = ?";
+    $delete_stmt = $conn->prepare($delete_query);
+    $delete_stmt->bind_param('ii', $userId, $allergy_id);
+    $delete_stmt->execute();
+}
+//************************************************************************************************** */
+
 $sql_query = "
     SELECT al.allergy_id, al.allergy
     FROM user_allergies ual
@@ -30,6 +67,7 @@ $stmt->bind_param('i', $userId);  // 'i' for integer
 $stmt->execute();
 $result = $stmt->get_result();
 $preferences = $result->fetch_all(MYSQLI_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -51,21 +89,36 @@ $preferences = $result->fetch_all(MYSQLI_ASSOC);
             echo "<p class='profile-name'> Name: " . $_SESSION['name'] . "</p>";
             echo "<p class='profile-email'> Email: " . $_SESSION['email'] . "</p>";
         ?>
+        <!-- Il y a aussi la section des inputs et buttons des allergies, legit jsute copy paste it over ce quil y a deja pour rpeferences, mais jsute change pour avoir les bons noms -->
         <div class="allergies-section">
-            <h3>Allergies</h3>
-            <?php if (empty($allergies)): ?>
-                <p class="no-allergies">No allergies</p>
-            <?php else: ?>
-                <table class="allergies-table">
-                    <tbody>
-                        <?php foreach ($allergies as $allergy): ?>
-                            <tr>
-                                <td><?php echo ($allergy['allergy']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
+        <table class="allergies-table">
+            <thead>
+                <tr>
+                    <th><h3>Allergies</h3></th>
+                    <th>
+                        <h3>
+                        <form method="POST" style="display:inline;">
+                            <input type="text" name="allergy_name" placeholder="Allergy name" required>
+                            <button type="submit" name="add_allergy">Add Allergy</button>
+                        </form>
+                        </h3>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($allergies as $allergy): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($allergy['allergy']); ?></td>
+                        <td>
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="allergy_id" value="<?php echo $allergy['allergy_id']; ?>">
+                                <button type="submit" name="delete_allergy">Delete</button>                                          
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
         </div>
         <div class="preferences-section">
             <h3>Dietary Preferences</h3>
