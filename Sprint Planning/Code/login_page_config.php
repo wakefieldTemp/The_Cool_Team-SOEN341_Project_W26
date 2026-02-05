@@ -1,14 +1,12 @@
 <?php
-
 $host = "localhost";
-$user = "ucuvhcnpfcavh";
-$password = "Concordi26-project";
-$database = "dby41clch96chw";
+$user = "root";
+$password = "";   // empty for XAMPP on Mac usually
+$database = "user_db"; // or whatever database name you created in phpMyAdmin
 
 $conn = new mysqli($host, $user, $password, $database);
 
-if($conn->connect_error) {
-    die("Connection failed: ". $conn->connect_error);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
-
 ?>

@@ -16,6 +16,34 @@ body {
     min-height: 100vh;
     background: linear-gradient(to bottom right, rgb(195, 243, 189), rgb(112, 165, 81));
     color: black;
+    padding-top: 110px;
+
+}
+
+.site-header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 90px;
+    background: rgb(195, 243, 189);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+.logo {
+    height: 55px;
+    width: auto;
+}
+
+.site-title {
+    font-size: 28px;
+    color: rgb(6, 59, 9);
+    font-weight: 800;
 }
 
 .container {
@@ -94,4 +122,5 @@ p a:hover {
     text-align: center;
     margin-bottom: 20px;
 }
+
 

@@ -132,9 +132,11 @@ $preferences = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
 
-<!DOCTYPE html>
-<html lang ="en"> 
 
+
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -142,86 +144,97 @@ $preferences = $result->fetch_all(MYSQLI_ASSOC);
     <link rel="stylesheet" href="profile_page_style.css">
 </head>
 
-
 <body>
 
-    <div class="profile-container">
+<header class="site-header">
+    <div class="brand">
+        <img class="logo" src="logo.jpg" alt="Logo">
+
+        <div class="title">The Cool Team App</div>
+    </div>
+
+    <div class="back-button-container">
+        <button class="btn btn-primary" onclick="window.location.href='main_menu.php'">
+            Back to Main Page
+        </button>
+    </div>
+</header>
+
+<!-- ===== PAGE CONTENT ===== -->
+<main class="page">
+    <section class="card">
+
         <h2>Your Profile</h2>
-        <?php
-            echo "<p class='profile-name'> Name: " . $_SESSION['name'] . "</p>";
-            echo "<p class='profile-email'> Email: " . $_SESSION['email'] . "</p>";
-        ?>
-        <div class="allergies-section"> <!-- Beginning of pdp -->
-        <table class="allergies-table">
-            <thead>
-                <tr>
-                    <th><h3>Allergies</h3></th>
-                    <th>
-                        <h3>
-                        <form method="POST" style="display:inline;">
-                            <input type="text" name="allergy_name" placeholder="Allergy name" required>
-                            <button type="submit" name="add_allergy">Add Allergy</button>
-                        </form>
-                        </h3>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($allergies as $allergy): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($allergy['allergy']); ?></td>
-                        <td>
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="allergy_id" value="<?php echo $allergy['allergy_id']; ?>">
-                                <button type="submit" name="delete_allergy">Delete</button>                                          
-                            </form>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+
+        <div class="profile-info">
+            <div class="profile-name">Name: <?php echo htmlspecialchars($_SESSION['name']); ?></div>
+            <div class="profile-email">Email: <?php echo htmlspecialchars($_SESSION['email']); ?></div>
         </div>
-         <!-- end of dp -->
-        <div class="preferences-section">
-            <table class="preferences-table">
-            <thead>
-                <tr>
-                    <th><h3>Dietary Preferences</h3></th>
-                    <th>
-                        <h3>
-                        <form method="POST" style="display:inline;">
-                            <input type="text" name ="preference_name" placeholder="Preference name" required>
-                            <button type="submit" name="add_preference">Add Dietary Preference</button>
-                        </form>
-                        </h3>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($preferences)): ?>
-                    <tr>
-                        <td colspan="2" class="no-preferences">No dietary preferences</td>
-                    </tr>
+
+        <!-- ===== Allergies ===== -->
+        <div class="card" style="margin-top: 16px;">
+            <h3 style="margin-bottom: 12px;">Allergies</h3>
+
+            <div class="row" style="margin-bottom: 12px;">
+                <form method="POST" class="row">
+                    <input type="text" name="allergy_name" placeholder="Allergy name" required>
+                    <button type="submit" name="add_allergy" class="btn btn-primary">Add Allergy</button>
+                </form>
+            </div>
+
+            <div class="list">
+                <?php if (empty($allergies)): ?>
+                    <div class="list-item">
+                        <span>No allergies yet</span>
+                    </div>
                 <?php else: ?>
-                    <?php foreach ($preferences as $preference): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($preference['preference']); ?></td>
-                            <td>
-                                <form method="POST" style="display:inline;">
-                                    <input type="hidden" name="preference_id" value="<?php echo $preference['preference_id']; ?>">
-                                    <button type="submit" name="delete_preference">Delete</button>                                          
-                                </form>
-                            </td>
-                        </tr>
+                    <?php foreach ($allergies as $allergy): ?>
+                        <div class="list-item">
+                            <span><?php echo htmlspecialchars($allergy['allergy']); ?></span>
+
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="allergy_id" value="<?php echo (int)$allergy['allergy_id']; ?>">
+                                <button type="submit" name="delete_allergy" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
-            </tbody>
-        </table>
+            </div>
         </div>
-      
-        <div class="back-button-container">
-            <button onclick="window.location.href='main_menu.php'">Back to Main Page</button>
-    </div>
-</body>
 
+        <!-- ===== Dietary Preferences ===== -->
+        <div class="card" style="margin-top: 16px;">
+            <h3 style="margin-bottom: 12px;">Dietary Preferences</h3>
+
+            <div class="row" style="margin-bottom: 12px;">
+                <form method="POST" class="row">
+                    <input type="text" name="preference_name" placeholder="Preference name" required>
+                    <button type="submit" name="add_preference" class="btn btn-primary">Add Dietary Preference</button>
+                </form>
+            </div>
+
+            <div class="list">
+                <?php if (empty($preferences)): ?>
+                    <div class="list-item">
+                        <span>No dietary preferences</span>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($preferences as $preference): ?>
+                        <div class="list-item">
+                            <span><?php echo htmlspecialchars($preference['preference']); ?></span>
+
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="preference_id" value="<?php echo (int)$preference['preference_id']; ?>">
+                                <button type="submit" name="delete_preference" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+
+    </section>
+</main>
+
+</body>
 </html>

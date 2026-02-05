@@ -33,6 +33,11 @@ function isActiveForm($formName, $activeForm){
 
 <body>
 
+     <header class="site-header">
+         <h1 class="site-title">The Cool Team App</h1>
+     </header>
+
+
     <div class="container">
         <div class="form-box <?= isActiveForm('login', $activeForm); ?>" id="login-form">
             <form action="login_page_register.php" method="post">
