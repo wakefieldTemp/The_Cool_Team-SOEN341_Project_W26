@@ -1,68 +1,179 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
 
 *{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Comfortaa", sans-serif;
-    font-weight: 800;
-    font-style: normal;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Comfortaa", sans-serif;
+  font-weight: 700;
 }
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(to bottom right, rgb(195, 243, 189), rgb(112, 165, 81));
-    color: black;
+body{
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, rgb(195, 243, 189), rgb(112, 165, 81));
+  color: rgb(6, 59, 9);
 }
 
-h2 {
-    font-size: 75px;
-    background: linear-gradient(to bottom, rgb(104, 197, 104), rgb(46, 160, 46));
-    padding: 25px;
-    border-radius: 25px;
-    text-align: center;
-    position:relative;
-    top: -400px;
-    margin-bottom: 50px;
-    color: rgb(255, 255, 255);
+/* ===== Header bar ===== */
+.site-header{
+  position: sticky; /* stays at top when scrolling */
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-.profile-name {
-    font-size: 25px;
-    text-align: center;
-    position: relative;
-    top: -425px;
-    margin-bottom: 20px;
-    color: rgb(6, 59, 9);
+.site-header .brand{
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.profile-email {
-    font-size: 25px;
-    text-align: center;
-    position: relative;
-    top: -425px;
-    margin-bottom: 20px;
-    color: rgb(6, 59, 9);
+.site-header .logo{
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.site-header .title{
+  font-size: 20px;
+  font-weight: 800;
+  color: rgb(6, 59, 9);
+}
+
+/* ===== Main layout ===== */
+.page{
+  max-width: 920px;
+  margin: 28px auto;
+  padding: 0 18px;
+}
+
+.card{
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* Page title inside card */
+h2{
+  font-size: 44px;
+  color: white;
+  background: linear-gradient(to bottom, rgb(104, 197, 104), rgb(46, 160, 46));
+  padding: 18px 20px;
+  border-radius: 16px;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+/* Profile info */
+.profile-info{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 18px;
+  margin-bottom: 18px;
+}
+
+.profile-name,
+.profile-email{
+  position: static;        /* kills the old top offsets */
+  top: auto;
+  font-size: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Buttons */
+.btn{
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary{
+  color: white;
+  background: linear-gradient(to bottom, rgb(104, 197, 104), rgb(46, 160, 46));
+}
+
+.btn-primary:hover{
+  box-shadow: 0 0 15px 5px rgba(0, 128, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-danger{
+  background: #c62828;
+  color: white;
+}
+
+.btn-danger:hover{
+  box-shadow: 0 0 15px 5px rgba(198, 40, 40, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Back button placement in header (not fixed) */
+.back-button-container{
+  position: static;
 }
 
 .back-button-container button{
-    position: fixed;
-    color: white;
-    top: 50px;
-    left: 50px;
-    font-size: 15px;
-    padding: 8px 16px;
-    border-radius: 5px;
-    border: none;
-    background: linear-gradient(to bottom, rgb(104, 197, 104), rgb(46, 160, 46));
+  position: static;        /* kills fixed positioning */
+  top: auto;
+  left: auto;
+  font-size: 14px;
 }
 
-.back-button-container button:hover{
-    box-shadow: 0 0 15px 5px rgba(0, 128, 0, 0.6);
-    scale: 1.1;
-    cursor: pointer;
+/* Forms / rows */
+.row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
+input[type="text"]{
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.20);
+  min-width: 240px;
+  outline: none;
+}
+
+/* Lists */
+.list{
+  margin-top: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.list-item{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Mobile */
+@media (max-width: 650px){
+  .profile-info{ grid-template-columns: 1fr; }
+  input[type="text"]{ min-width: 100%; }
+}
