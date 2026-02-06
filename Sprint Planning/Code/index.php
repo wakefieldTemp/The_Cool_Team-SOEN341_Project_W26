@@ -4,7 +4,8 @@ session_start();
 
 $errors = [
     'login' => $_SESSION['login_error'] ?? '',
-    'register' => $_SESSION['register_error'] ?? ''
+    'register' => $_SESSION['register_error'] ?? '',
+    'retype' => $_SESSION['retype_error'] ?? ''
 ];
 $activeForm = $_SESSION['active_form'] ?? 'login';
 
@@ -54,9 +55,11 @@ function isActiveForm($formName, $activeForm){
             <form action="login_page_register.php" method="post">
                 <h2>Register</h2>
                 <?= showError($errors['register']); ?>
+                <?= showError($errors['retype']); ?>
                 <input type="name" name="name" placeholder="Username" required>
                 <input type="email" name="email" placeholder="Email" required>
                 <input type="password" name="password" placeholder="Password" required>
+                <input type="password" name="retype_password" placeholder="Confirm password" required>
                 <button type="submit" name="register">Register</button>
                 <p>Already have an account? Login <a href="#" onclick="showForm('login-form')">here</a></p>             
             </form>

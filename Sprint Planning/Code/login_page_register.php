@@ -6,14 +6,20 @@ require_once 'login_page_config.php';
 if(isset($_POST['register'])){
     $name = $_POST['name'];
     $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $password = $_POST['password'];
+    $password_retype = $_POST['retype_password'];
 
     $check_email = $conn->query("SELECT email FROM users WHERE email = '$email'");
     if($check_email->num_rows > 0){
         $_SESSION['register_error'] = 'Email is already registered!';
         $_SESSION['active_form'] = 'register';
     }
+    elseif($password != $password_retype){
+        $_SESSION['retype_error'] = 'Passwords do not match';
+        $_SESSION['active_form'] = 'register';
+    }
     else{
+        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         $conn->query("INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')");
     }
 
