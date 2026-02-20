@@ -10,7 +10,7 @@
 
 body{
   min-height: 100vh;
-  background: linear-gradient(to bottom right, rgb(195, 243, 189), rgb(112, 165, 81));
+  background: radial-gradient(circle, rgb(221, 241, 218), rgb(202, 219, 202));
   color: rgb(6, 59, 9);
 }
 
@@ -25,7 +25,7 @@ body{
   gap: 16px;
 
   padding: 16px 24px;
-  background: rgba(255, 255, 255, 0.35);
+  background: rgb(104, 197, 104);
   backdrop-filter: blur(6px);
   border-bottom: 1px solid rgba(0,0,0,0.08);
 }
@@ -172,8 +172,3 @@ input[type="text"]{
   border: 1px solid rgba(0,0,0,0.08);
 }
 
-/* Mobile */
-@media (max-width: 650px){
-  .profile-info{ grid-template-columns: 1fr; }
-  input[type="text"]{ min-width: 100%; }
-}
