@@ -3,6 +3,15 @@ session_start();
 require_once 'login_page_config.php';
 $userId = $_SESSION['user_id'];
 
+if(isset($_POST['delete_recipe'])) {
+    $recipe_id = $_POST['recipe_id'];
+    $delete_query = "DELETE FROM recipes WHERE recipe_id = ? AND user_id = ?";
+    $delete_stmt = $conn->prepare($delete_query);
+    $delete_stmt->bind_param('ii', $recipe_id, $userId);
+    $delete_stmt->execute();
+}
+
+
 $order_by = 'recipe_name'; // THESE TWO VARIABLES WILL BE USED FOR SORTING
 $order_direction = 'ASC';
 
