@@ -1,3 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="profile_page_style.css">
+</head>
+
+<body>
+    <a href="add_recipe.php" class="add-recipe-btn" title="Add Recipes" aria-label="Add Recipes">Add Recipes</a>
+</body>
+</html>
+
+
 <?php
 session_start();
 require_once 'login_page_config.php';
@@ -34,20 +49,6 @@ $recipes = $stmt->get_result();
     <title>Profile Page</title>
     <link rel="stylesheet" href="profile_page_style.css">
 </head>
-
-<header class="site-header">
-    <div class="brand">
-        <img class="logo" src="logo.jpg" alt="Logo">
-
-        <div class="title">The Cool Team App</div>
-    </div>
-
-    <div class="back-button-container">
-        <button class="btn btn-primary" onclick="window.location.href='main_menu.php'">
-            Back to Main Page
-        </button>
-    </div>
-</header>
 
 <body>
     <a href="add_recipe.php" class="add-recipe-btn" title="Add Recipes" aria-label="Add Recipes">Add Recipes</a>

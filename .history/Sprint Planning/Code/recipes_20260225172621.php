@@ -35,20 +35,6 @@ $recipes = $stmt->get_result();
     <link rel="stylesheet" href="profile_page_style.css">
 </head>
 
-<header class="site-header">
-    <div class="brand">
-        <img class="logo" src="logo.jpg" alt="Logo">
-
-        <div class="title">The Cool Team App</div>
-    </div>
-
-    <div class="back-button-container">
-        <button class="btn btn-primary" onclick="window.location.href='main_menu.php'">
-            Back to Main Page
-        </button>
-    </div>
-</header>
-
 <body>
     <a href="add_recipe.php" class="add-recipe-btn" title="Add Recipes" aria-label="Add Recipes">Add Recipes</a>
     <div class="card">
