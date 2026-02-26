@@ -2,6 +2,7 @@
 
 **Project:** MealMajor  
 **Course:** SOEN 341  
+**Sprint:** 1
 **Meeting #:** 2  
 **Date:** 2026-01-29  
 **Duration:** ~62 minutes  
