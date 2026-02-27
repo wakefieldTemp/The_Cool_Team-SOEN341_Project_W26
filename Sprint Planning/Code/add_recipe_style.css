@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Comfortaa", sans-serif;
+  font-weight: 700;
+}
+
+body{
+  min-height: 100vh;
+  background: radial-gradient(circle, rgb(221, 241, 218), rgb(202, 219, 202));
+  color: rgb(6, 59, 9);
+}
+
+.site-header{
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 16px 24px;
+  background: rgb(104, 197, 104);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.site-header .brand{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-header .logo{
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.site-header .title{
+  font-size: 20px;
+  font-weight: 800;
+  color: rgb(6, 59, 9);
+}
+
+.page{
+  max-width: 920px;
+  margin: 28px auto;
+  padding: 0 18px;
+}
+
+.card{
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+h2{
+  font-size: 44px;
+  color: white;
+  background: linear-gradient(to bottom, rgb(104, 197, 104), rgb(46, 160, 46));
+  padding: 18px 20px;
+  border-radius: 16px;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+h3{
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.btn{
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary{
+  color: white;
+  background: linear-gradient(to bottom, rgb(104, 197, 104), rgb(46, 160, 46));
+}
+
+.btn-primary:hover{
+  box-shadow: 0 0 15px 5px rgba(0, 128, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-danger{
+  background: #c62828;
+  color: white;
+}
+
+.btn-danger:hover{
+  box-shadow: 0 0 15px 5px rgba(198, 40, 40, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-block{
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.form{
+  display: grid;
+  gap: 22px;
+}
+
+.field{
+  display: grid;
+  gap: 10px;
+}
+
+label{
+  font-size: 14px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select{
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.7);
+  outline: none;
+}
+
+textarea{
+  min-height: 120px;
+  resize: vertical;
+}
+
+.section{
+  margin-top: 2px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.45);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.grid-2{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 18px;
+}
+
+@media (max-width: 800px){
+  .grid-2{ grid-template-columns: 1fr; }
+}
+
+/* Row layouts */
+.row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#ingredient_name{
+  flex: 1;
+  min-width: 240px;
+}
+
+#step_name{
+  flex: 1;
+  min-width: 260px;
+  min-height: 70px;
+}
+
+/* Dietary tags */
+.checkbox-group{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 6px 0;
+}
+
+.checkbox-group label{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.table-wrap{
+  margin-top: 10px;
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+.table{
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.table thead th{
+  text-align: left;
+  font-size: 13px;
+  padding: 10px 12px;
+  background: rgba(104, 197, 104, 0.18);
+  color: rgb(6, 59, 9);
+}
+
+.table tbody td{
+  padding: 10px 12px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-size: 14px;
+}

@@ -135,8 +135,8 @@ $recipes = $result->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
-    <link rel="stylesheet" href="profile_page_style.css">
+    <title>My Recipes</title>
+    <link rel="stylesheet" href="recipes_style.css">
 </head>
 
 <header class="site-header">
@@ -205,6 +205,8 @@ $recipes = $result->get_result();
             </div>
             </div>
             </form>
+
+
             <?php
 if ($recipes->num_rows > 0) {
     while ($row = $recipes->fetch_assoc()) {
@@ -280,5 +282,11 @@ if ($recipes->num_rows > 0) {
 }
 ?>
     </div>
+
+    <script>
+        function toggleRecipe(element) {
+            element.classList.toggle('open');
+        }
+    </script>
 </body>
 </html>

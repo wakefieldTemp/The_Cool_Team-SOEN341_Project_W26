@@ -72,129 +72,155 @@ if(isset($_POST['save_recipe'])) {
 }
 
 ?>
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Add Recipe</title>
-    <link rel="stylesheet" href="add_recipe_style.css">
-	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Recipe</title>
+
+  <link rel="stylesheet" href="add_recipe_style.css" />
 </head>
 
 <body>
 
-<div class="main">
-    <form id="main-form" method="POST">
+<header class="site-header">
+  <div class="brand">
+    <img class="logo" src="logo.jpg" alt="Logo">
+    <div class="title">The Cool Team App</div>
+  </div>
 
-        <div>
-            <h1>Recipe Name</h1>
-            <input type="text" name="recipe_name" placeholder="Enter recipe name" required>
-        </div>
+  <div class="back-button-container">
+    <button class="btn btn-primary" onclick="window.location.href='recipes.php'">
+      Back to Recipes
+    </button>
+  </div>
+</header>
 
-        <div>
-            <h1>Recipe Description</h1>
-            <textarea name="recipe_description" placeholder="Enter recipe description" required></textarea>
-        </div>
+<main class="page">
+  <section class="card">
 
-        <div>
-            <h1>Ingredients</h1>
-            <div id="ingredients-div">
-                <input type="text" id="ingredient_name" placeholder="Ingredient name">
-                <button type="button" id="add_ingredient" class="btn btn-primary">Add Ingredient</button>
-            </div>
-            <table id="ingredients-list">
-                <thead>
-                    <tr>
-                        <th>Ingredient</th>
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                <tbody id="ingredients-tbody">
-                </tbody>
-            </table>
-            <input type="hidden" name="ingredients" id="ingredients_input">
-        </div>
+    <h2>Add Recipe</h2>
 
-        <div>
-            <h1>Prep Time</h1>
-            <input type="number" min="0" name="prep_time" placeholder="Enter prep time in minutes" required>
-        </div>
+    <form id="main-form" method="POST" class="form">
 
-        <div>
-            <h1>Cook Time</h1>
-            <input type="number" min="0" name="cook_time" placeholder="Enter cook time in minutes" required>
+      <div class="field">
+        <label for="recipe_name">Recipe Name</label>
+        <input id="recipe_name" type="text" name="recipe_name" placeholder="Enter recipe name" required>
+      </div>
+
+      <div class="field">
+        <label for="recipe_description">Recipe Description</label>
+        <textarea id="recipe_description" name="recipe_description" placeholder="Enter recipe description" required></textarea>
+      </div>
+
+      <section class="section">
+        <h3>Ingredients</h3>
+
+        <div class="row">
+          <input type="text" id="ingredient_name" placeholder="Ingredient name">
+          <button type="button" id="add_ingredient" class="btn btn-primary">Add Ingredient</button>
         </div>
 
-        <div>
-            <h1>Difficulty</h1>
-            <select name="difficulty" required>
-                <option value="">Select difficulty</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </select>
+        <div class="table-wrap">
+          <table id="ingredients-list" class="table">
+            <thead>
+              <tr>
+                <th>Ingredient</th>
+                <th style="width: 140px;">Remove</th>
+              </tr>
+            </thead>
+            <tbody id="ingredients-tbody"></tbody>
+          </table>
         </div>
 
-        <div>
-            <h1>Meal Type</h1>
-            <select name="meal_type" required>
-                <option value="">Select meal type</option>
-                <option value="breakfast">Breakfast</option>
-                <option value="lunch">Lunch</option>
-                <option value="dinner">Dinner</option>
-            </select>
-        </div>
-        
-        <div>
-            <h1>Calories</h1>
-            <input type="number" min="0" name="calories" placeholder="Enter calories" required>
+        <input type="hidden" name="ingredients" id="ingredients_input">
+      </section>
+
+      <!-- QUICK INFO -->
+      <div class="grid-2">
+        <div class="field">
+          <label for="prep_time">Prep Time (minutes)</label>
+          <input id="prep_time" type="number" min="0" name="prep_time" placeholder="e.g., 15" required>
         </div>
 
-        <div>
-            <h1>Dietary Tags</h1>
-            <label for="gmo_free">
-                <input type="checkbox" name="dietary_tags[]" value="gmo_free" id="gmo_free"> GMO-Free
-            </label>
-            <label for="gluten_free">
-                <input type="checkbox" name="dietary_tags[]" value="gluten_free" id="gluten_free"> Gluten-Free
-            </label>
-            <label for="lactose_free">
-                <input type="checkbox" name="dietary_tags[]" value="lactose_free" id="lactose_free"> Lactose-Free
-            </label>
-            <label for="vegan">
-                <input type="checkbox" name="dietary_tags[]" value="vegan" id="vegan"> Vegan
-            </label>
-            <label for="vegetarian">
-                <input type="checkbox" name="dietary_tags[]" value="vegetarian" id="vegetarian"> Vegetarian
-            </label>
+        <div class="field">
+          <label for="cook_time">Cook Time (minutes)</label>
+          <input id="cook_time" type="number" min="0" name="cook_time" placeholder="e.g., 30" required>
         </div>
 
-        <div>
-            <h1>Steps</h1>
-            <div id="steps-div">
-                <textarea type="text" id="step_name" placeholder="Step description"></textarea>
-                <button type="button" id="add_step" class="btn btn-primary">Add Step</button>
-            </div>
-            <table id="steps-list">
-                <thead>
-                    <tr>
-                        <th>Step</th>
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                <tbody id="steps-tbody">
-                </tbody>
-            </table>
-            <input type="hidden" name="steps" id="steps_input">
+        <div class="field">
+          <label for="difficulty">Difficulty</label>
+          <select id="difficulty" name="difficulty" required>
+            <option value="">Select difficulty</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
         </div>
-        <button type="submit" name="save_recipe" class="btn btn-success">Save Recipe</button>
+
+        <div class="field">
+          <label for="meal_type">Meal Type</label>
+          <select id="meal_type" name="meal_type" required>
+            <option value="">Select meal type</option>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="calories">Calories</label>
+          <input id="calories" type="number" min="0" name="calories" placeholder="e.g., 450" required>
+        </div>
+
+        <div class="field">
+          <label>Dietary Tags</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="dietary_tags[]" value="gmo_free"> GMO-Free</label>
+            <label><input type="checkbox" name="dietary_tags[]" value="gluten_free"> Gluten-Free</label>
+            <label><input type="checkbox" name="dietary_tags[]" value="lactose_free"> Lactose-Free</label>
+            <label><input type="checkbox" name="dietary_tags[]" value="vegan"> Vegan</label>
+            <label><input type="checkbox" name="dietary_tags[]" value="vegetarian"> Vegetarian</label>
+          </div>
+        </div>
+      </div>
+
+      <section class="section">
+        <h3>Steps</h3>
+
+        <div class="row">
+          <textarea id="step_name" placeholder="Step description"></textarea>
+          <button type="button" id="add_step" class="btn btn-primary">Add Step</button>
+        </div>
+
+        <div class="table-wrap">
+          <table id="steps-list" class="table">
+            <thead>
+              <tr>
+                <th>Step</th>
+                <th style="width: 140px;">Remove</th>
+              </tr>
+            </thead>
+            <tbody id="steps-tbody"></tbody>
+          </table>
+        </div>
+
+        <input type="hidden" name="steps" id="steps_input">
+      </section>
+
+      <button type="submit" name="save_recipe" class="btn btn-primary btn-block">
+        Save Recipe
+      </button>
 
     </form>
-</div> 
+
+  </section>
+</main>
 
 </body>
+</html>
+
 <script>
 
     function checkIngredient(ingredientName){
