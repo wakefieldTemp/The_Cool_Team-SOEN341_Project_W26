@@ -205,6 +205,8 @@ $recipes = $result->get_result();
             </div>
             </div>
             </form>
+
+
             <?php
 if ($recipes->num_rows > 0) {
     while ($row = $recipes->fetch_assoc()) {
