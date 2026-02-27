@@ -266,14 +266,12 @@ select:focus{
 }
 
 .recipe-ingredients,
-.recipe-tags,
 .recipe-steps,
 .recipe-actions{
   display: none;
 }
 
 .recipe-card.open .recipe-ingredients,
-.recipe-card.open .recipe-tags,
 .recipe-card.open .recipe-steps,
 .recipe-card.open .recipe-actions{
   display: block;
@@ -323,6 +321,7 @@ select:focus{
   background: linear-gradient(to bottom, var(--green-1), var(--green-2));
   padding: 8px 12px;
   border-radius: 12px;
+  flex-shrink: 0;
 }
 
 .recipe-actions form{
@@ -330,6 +329,8 @@ select:focus{
   border: none;
   padding: 0;
   margin: 0;
+  flex: 0 0 auto;
+  display: inline-block;
 }
 
 .recipe-actions button{
@@ -339,6 +340,9 @@ select:focus{
   padding: 8px 12px;
   border-radius: 12px;
   background: linear-gradient(to bottom, rgb(235, 92, 92), rgb(196, 42, 42));
+  white-space: nowrap;
+  width: auto;
+  display: inline-block;
 }
 
 .recipe-actions hr{

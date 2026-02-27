@@ -282,5 +282,11 @@ if ($recipes->num_rows > 0) {
 }
 ?>
     </div>
+
+    <script>
+        function toggleRecipe(element) {
+            element.classList.toggle('open');
+        }
+    </script>
 </body>
 </html>
