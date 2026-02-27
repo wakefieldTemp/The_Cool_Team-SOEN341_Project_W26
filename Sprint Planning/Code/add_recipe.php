@@ -28,7 +28,7 @@ if(isset($_POST['save_recipe'])) {
 
     $recipe_insert_query = "INSERT INTO recipes (user_id, recipe_name, description, prep_time, cook_time, difficulty_level, calories, gmo_free, gluten_free, lactose_free, vegan, vegetarian, meal_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $recipe_stmt = $conn->prepare($recipe_insert_query);
-    $recipe_stmt->bind_param('issiisiiiiiiis', $userId, $recipe_name, $recipe_description, $prep_time, $cook_time, $difficulty, $calories, $gmo_free, $gluten_free, $lactose_free, $vegan, $vegetarian, $meal_type);
+    $recipe_stmt->bind_param('issiisiiiiiis', $userId, $recipe_name, $recipe_description, $prep_time, $cook_time, $difficulty, $calories, $gmo_free, $gluten_free, $lactose_free, $vegan, $vegetarian, $meal_type);
     $recipe_stmt->execute();
     $recipe_id = $conn->insert_id;
 
