@@ -1,13 +1,4 @@
 <?php
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-
-
-
 session_start();
 require_once 'login_page_config.php';
 $userId = $_SESSION['user_id'];
@@ -196,7 +187,6 @@ if(isset($_POST['save_recipe'])) {
         </div>
       </div>
 
-      <!-- STEPS -->
       <section class="section">
         <h3>Steps</h3>
 

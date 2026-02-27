@@ -10,7 +10,7 @@ session_start();
 require_once 'login_page_config.php';
 $userId = $_SESSION['user_id'];
 
-$order_by = 'recipe_name'; // THESE TWO VARIABLES WILL BE USED FOR SORTING
+$order_by = 'recipe_name';
 $order_direction = 'ASC';
 
 $sql_query = "SELECT recipe_id, recipe_name,
@@ -85,7 +85,6 @@ $recipes = $stmt->get_result();
                   ? implode(', ', $ingredients)
                   : 'No ingredients listed.';
 
-              // Steps
               $step_query = "SELECT step_number, step_instruction
                              FROM recipe_steps
                              WHERE recipe_id = ?
