@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require_once 'login_page_config.php';
 // Tried to make it after logging out, you can't come back on this page (doesn't work D;)
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
@@ -10,6 +10,99 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
 }
+
+if (!isset($_SESSION["breakfast_recipes"]) || isset($_POST["reset_recipes"])) {
+
+    $recipe_breakfast_query = "
+        SELECT recipe_id 
+        FROM recipes 
+        WHERE user_id = ? AND meal_type = 'breakfast'
+        ORDER BY RAND()
+        LIMIT 7
+    ";
+
+    $recipe_breakfast_stmt = $conn->prepare($recipe_breakfast_query);
+    $recipe_breakfast_stmt->bind_param("i", $_SESSION['user_id']);
+    $recipe_breakfast_stmt->execute();
+    $recipe_breakfast_result = $recipe_breakfast_stmt->get_result();
+
+    $_SESSION["breakfast_recipes"] = [];
+
+    while ($row = $recipe_breakfast_result->fetch_assoc()) {
+        $_SESSION["breakfast_recipes"][] = $row["recipe_id"];
+    }
+}
+$breakfast_recipes = $_SESSION["breakfast_recipes"];
+
+if (!isset($_SESSION["lunch_recipes"]) || isset($_POST["reset_recipes"])) {
+
+    $recipe_breakfast_query = "
+        SELECT recipe_id 
+        FROM recipes 
+        WHERE user_id = ? AND meal_type = 'lunch'
+        ORDER BY RAND()
+        LIMIT 7
+    ";
+
+    $recipe_lunch_stmt = $conn->prepare($recipe_lunch_query);
+    $recipe_lunch_stmt->bind_param("i", $_SESSION['user_id']);
+    $recipe_lunch_stmt->execute();
+    $recipe_lunch_result = $recipe_lunch_stmt->get_result();
+
+    $_SESSION["lunch_recipes"] = [];
+
+    while ($row = $recipe_lunch_result->fetch_assoc()) {
+        $_SESSION["lunch_recipes"][] = $row["recipe_id"];
+    }
+}
+$lunch_recipes = $_SESSION["lunch_recipes"];
+
+if (!isset($_SESSION["dinner_recipes"]) || isset($_POST["reset_recipes"])) {
+
+    $recipe_dinner_query = "
+        SELECT recipe_id 
+        FROM recipes 
+        WHERE user_id = ? AND meal_type = 'dinner'
+        ORDER BY RAND()
+        LIMIT 7
+    ";
+
+    $recipe_dinner_stmt = $conn->prepare($recipe_dinner_query);
+    $recipe_dinner_stmt->bind_param("i", $_SESSION['user_id']);
+    $recipe_dinner_stmt->execute();
+    $recipe_dinner_result = $recipe_dinner_stmt->get_result();
+
+    $_SESSION["dinner_recipes"] = [];
+
+    while ($row = $recipe_dinner_result->fetch_assoc()) {
+        $_SESSION["dinner_recipes"][] = $row["recipe_id"];
+    }
+}
+$dinner_recipes = $_SESSION["dinner_recipes"];
+
+if (!isset($_SESSION["snack_recipes"]) || isset($_POST["reset_recipes"])) {
+
+    $recipe_snack_query = "
+        SELECT recipe_id 
+        FROM recipes 
+        WHERE user_id = ? AND meal_type = 'snack'
+        ORDER BY RAND()
+        LIMIT 7
+    ";
+
+    $recipe_snack_stmt = $conn->prepare($recipe_snack_query);
+    $recipe_snack_stmt->bind_param("i", $_SESSION['user_id']);
+    $recipe_snack_stmt->execute();
+    $recipe_snack_result = $recipe_snack_stmt->get_result();
+
+    $_SESSION["snack_recipes"] = [];
+
+    while ($row = $recipe_snack_result->fetch_assoc()) {
+        $_SESSION["snack_recipes"][] = $row["recipe_id"];
+    }
+}
+$snack_recipes = $_SESSION["snack_recipes"];
+
 ?>
 <!doctype html>
 <html lang="en">
