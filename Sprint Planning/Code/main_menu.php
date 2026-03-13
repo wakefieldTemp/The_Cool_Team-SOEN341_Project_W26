@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if (!isset($_SESSION["breakfast_recipes"])) {
+/*if (!isset($_SESSION["breakfast_recipes"])) {
 
     $recipe_breakfast_query = "
         SELECT recipe_id 
@@ -94,7 +94,7 @@ if (!isset($_SESSION["snack_recipes"]) || isset($_POST["reset_recipes"])) {
     }
 }
 $snack_recipes = $_SESSION["snack_recipes"];
-
+*/
 ?>
 <!doctype html>
 <html lang="en">
