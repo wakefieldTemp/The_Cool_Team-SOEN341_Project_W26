@@ -1,6 +1,7 @@
 <?php
 require 'api_config.php';
 require 'login_page_config.php';
+require 'sql_recipe_functions.php';
 session_start();
 $userId = $_SESSION['user_id'];
 $show_current_recipe = false;
@@ -23,64 +24,9 @@ if(isset($_POST['save_recipe'])) {
     $vegan        = $recipe['vegan']        ? 1 : 0;
     $vegetarian   = $recipe['vegetarian']   ? 1 : 0;
 
-    $recipe_insert_query = "INSERT INTO recipes (user_id, recipe_name, description, prep_time, cook_time, difficulty_level, calories, gmo_free, gluten_free, lactose_free, vegan, vegetarian, meal_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $recipe_stmt = $conn->prepare($recipe_insert_query);
-    $recipe_stmt->bind_param('issiisiiiiiis',
-        $userId,
-        $name,
-        $description,
-        $prep_time,
-        $cook_time,
-        $difficulty,
-        $calories,
-        $gmo_free,
-        $gluten_free,
-        $lactose_free,
-        $vegan ,
-        $vegetarian,
-        $meal_type
-    );
+    addRecipe($userId, $name, $description, $prep_time, $cook_time, $difficulty, $calories, $gmo_free, $gluten_free, $lactose_free, $vegan, $vegetarian, $meal_type, $recipe['ingredients'], $recipe['steps']);
 
-    $recipe_stmt->execute();
-    $recipe_id = $conn->insert_id;
-
-    foreach($recipe['ingredients'] as $ingredient) {
-        $ingredient = trim($ingredient);
-
-        $ingredient_query = "SELECT ingredient_id FROM ingredients WHERE ingredient_name = ?";
-        $ingredient_result = $conn->prepare($ingredient_query);
-        $ingredient_result->bind_param('s', $ingredient);
-        $ingredient_result->execute();
-        $ingredient_result->store_result();
-
-        if($ingredient_result->num_rows > 0) {
-            $ingredient_result->bind_result($ingredient_id);
-            $ingredient_result->fetch();
-        } else {
-            $insert_query = "INSERT INTO ingredients (ingredient_name) VALUES (?)";
-            $insert_stmt = $conn->prepare($insert_query);
-            $insert_stmt->bind_param('s', $ingredient);
-            $insert_stmt->execute();
-            $ingredient_id = $conn->insert_id;
-        }
-        $ingredient_result->close();
-
-        $recipe_ingredient_insert_query = "INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (?, ?)";
-        $recipe_ingredient_result = $conn->prepare($recipe_ingredient_insert_query);
-        $recipe_ingredient_result->bind_param('ii', $recipe_id, $ingredient_id);
-        $recipe_ingredient_result->execute();
-    }
-
-    foreach($recipe['steps'] as $index => $step) {
-        $step = trim($step);
-        $recipe_step_insert_query = "INSERT INTO recipe_steps (recipe_id, step_number, step_instruction) VALUES (?, ?, ?)";
-        $recipe_step_result = $conn->prepare($recipe_step_insert_query);
-        $step_number = $index + 1;
-        $recipe_step_result->bind_param('iis', $recipe_id, $step_number, $step);
-        $recipe_step_result->execute();
-    }
-
-    header("Location: main_menu.php");
+    header("Location: recipes.php");
     exit();
 }
 
@@ -92,106 +38,7 @@ if(isset($_POST['create_recipe'])) {
     $recipe_ingredients_string = implode(", ", $recipe_ingredients);
     $meal_type = $_POST['meal_type'] ?? '';
 
-    $sql_query = "
-        SELECT al.allergy_id, al.allergy
-        FROM user_allergies ual
-        JOIN allergies al ON ual.allergy_id = al.allergy_id
-        WHERE ual.user_id = ?
-        ORDER BY al.allergy
-    ";
-    $stmt = $conn->prepare($sql_query);
-    $stmt->bind_param('i', $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $allergies = $result->fetch_all(MYSQLI_ASSOC);
-    $allergiesList = array_column($allergies, 'allergy');
-    $allergiesString = implode(", ", $allergiesList);
-
-    $sql_query = "
-        SELECT dp.preference_id, dp.preference
-        FROM user_preferences udp
-        JOIN diet_preferences dp ON udp.preference_id = dp.preference_id
-        WHERE udp.user_id = ?
-        ORDER BY dp.preference
-    ";
-    $stmt = $conn->prepare($sql_query);
-    $stmt->bind_param('i', $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $preferences = $result->fetch_all(MYSQLI_ASSOC);
-    $preferencesList = array_column($preferences, 'preference');
-    $preferencesString = implode(", ", $preferencesList);
-
-    $prompt = "
-    Create a recipe using only the provided ingredients.
-
-    Ingredients: $recipe_ingredients_string
-    Dietary preferences: $preferencesString
-    Allergies: $allergiesString
-    Meal type: $meal_type
-
-    Return ONLY valid JSON with this exact structure:
-
-    {
-    \"name\": \"\",
-    \"description\": \"\",
-    \"prep_time_minutes\": number,
-    \"cook_time_minutes\": number,
-    \"difficulty\": \"easy|medium|hard\",
-    \"calories\": number,
-    \"gmo_free\": boolean,
-    \"gluten_free\": boolean,
-    \"lactose_free\": boolean,
-    \"vegan\": boolean,
-    \"vegetarian\": boolean,
-    \"ingredients\": [\"ingredient1\", \"ingredient2\"],
-    \"steps\": [\"step1\",\"step2\",\"step3\"]
-    }
-
-    Rules:
-    - Use only the ingredients listed.
-    - Respect dietary preferences and allergies.
-    - Output JSON only.
-    ";
-
-    $data = [
-        "model" => "claude-sonnet-4-6",
-        "max_tokens" => 1000,
-        "messages" => [
-            [
-                "role" => "user",
-                "content" => $prompt
-            ]
-        ]
-    ];
-
-    $ch = curl_init("https://api.anthropic.com/v1/messages");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Content-Type: application/json",
-        "x-api-key: " . $ANTHROPIC_API_KEY,
-        "anthropic-version: 2023-06-01"
-    ]);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-    $response = curl_exec($ch);
-    if ($response === false) {
-        die("cURL error: " . curl_error($ch));
-    }
-    curl_close($ch);
-
-    $result = json_decode($response, true);
-
-    if (!isset($result['content'][0]['text'])) {
-        die("<pre>API Error: " . htmlspecialchars($response) . "</pre>");
-    }
-
-    $recipeJson = $result['content'][0]['text'];
-    $recipeJson = preg_replace('/^```(?:json)?\s*/i', '', trim($recipeJson));
-    $recipeJson = preg_replace('/\s*```$/', '', $recipeJson);
-
-    $recipe = json_decode($recipeJson, true);
+    $recipe = createRecipe($userId, $recipe_ingredients_string, $meal_type);
     $show_current_recipe = ($recipe !== null);
 }
 ?>
@@ -201,8 +48,8 @@ if(isset($_POST['create_recipe'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Main Menu</title>
-    <link rel="stylesheet" href="main_menu_style.css">
+    <title>Recipe Creation</title>
+    <link rel="stylesheet" href="recipe_creation_style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
@@ -330,6 +177,7 @@ if(isset($_POST['create_recipe'])) {
                         <input type="hidden" name="meal_type" value="<?= htmlspecialchars($meal_type) ?>">
                         <button type="submit" name="save_recipe" class="btn btn-primary">Save to my recipes</button>
                     </form>
+
                     <button type="button" class="btn btn-ghost" id="btn-cancel">Cancel</button>
                 </div>
 

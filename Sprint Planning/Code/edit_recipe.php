@@ -3,6 +3,7 @@
   recipe (the placeholders becomes the current values) */
 session_start();
 require_once 'login_page_config.php';
+require_once 'sql_recipe_functions.php';
 $userId = $_SESSION['user_id'];
 
 $recipe_id = $_GET['recipe_id'] ?? null;
@@ -30,44 +31,7 @@ if(isset($_POST['save_recipe'])) {
     $vegan              = in_array('vegan', $dietary_tags) ? 1 : 0;
     $vegetarian         = in_array('vegetarian', $dietary_tags) ? 1 : 0;
 
-    $update_query = "UPDATE recipes SET recipe_name=?, description=?, prep_time=?, cook_time=?, difficulty_level=?, calories=?, gmo_free=?, gluten_free=?, lactose_free=?, vegan=?, vegetarian=?, meal_type=? WHERE recipe_id=? AND user_id=?";
-    $result = $conn->prepare($update_query);
-    $result->bind_param('ssiisiiiiiissi', $recipe_name, $recipe_description, $prep_time, $cook_time, $difficulty, $calories, $gmo_free, $gluten_free, $lactose_free, $vegan, $vegetarian, $meal_type, $recipe_id, $userId);
-    $result->execute();
-
-    // Since its kind of a pain to edit ingredients (can't simply do the UPDATE keyword), we just delete the ingredients and reinsert them
-    // Same for the steps
-    $conn->prepare("DELETE FROM recipe_ingredients WHERE recipe_id = ?")->execute([$recipe_id]);
-    $conn->prepare("DELETE FROM recipe_steps WHERE recipe_id = ?")->execute([$recipe_id]);
-
-    foreach($recipe_ingredients as $ingredient) {
-        $ingredient = trim($ingredient);
-        $check = $conn->prepare("SELECT ingredient_id FROM ingredients WHERE ingredient_name = ?");
-        $check->bind_param('s', $ingredient);
-        $check->execute();
-        $check->store_result();
-        if($check->num_rows > 0) {
-            $check->bind_result($ingredient_id);
-            $check->fetch();
-        } else {
-            $ins = $conn->prepare("INSERT INTO ingredients (ingredient_name) VALUES (?)");
-            $ins->bind_param('s', $ingredient);
-            $ins->execute();
-            $ingredient_id = $conn->insert_id;
-        }
-        $check->close();
-        $ri = $conn->prepare("INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (?, ?)");
-        $ri->bind_param('ii', $recipe_id, $ingredient_id);
-        $ri->execute();
-    }
-
-    foreach($recipe_steps as $index => $step) {
-        $step        = trim($step);
-        $step_number = $index + 1;
-        $rs = $conn->prepare("INSERT INTO recipe_steps (recipe_id, step_number, step_instruction) VALUES (?, ?, ?)");
-        $rs->bind_param('iis', $recipe_id, $step_number, $step);
-        $rs->execute();
-    }
+    editRecipe($userId, $recipe_id, $recipe_name, $recipe_description, $prep_time, $cook_time, $difficulty, $calories, $gmo_free, $gluten_free, $lactose_free, $vegan, $vegetarian, $meal_type, $recipe_ingredients, $recipe_steps);
 
     header('Location: recipes.php');
     exit;
