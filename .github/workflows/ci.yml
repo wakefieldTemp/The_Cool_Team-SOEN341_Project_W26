@@ -9,7 +9,11 @@ on:
 jobs:
   php-ci:
     runs-on: ubuntu-latest
-
+    container: 
+      image: composer:latest
+      volumes:
+        - my-app:/app
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,6 +36,11 @@ jobs:
           else
             echo "No composer.json found; skipping composer install."
           fi
+
+      - name: Running compose install
+        run: ./vendor/bin/phpunit tests
+
+
 
       - name: Empty tests (placeholder)
         run: |
