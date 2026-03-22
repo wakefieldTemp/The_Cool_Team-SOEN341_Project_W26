@@ -12,7 +12,7 @@ jobs:
     container: 
       image: composer:latest
       volumes:
-        - my-app:/app
+        - ${{github.workspace}}:/app
     
     steps:
       - name: Checkout code
