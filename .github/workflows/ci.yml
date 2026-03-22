@@ -31,7 +31,7 @@ jobs:
             echo "No composer.json found; skipping composer install."
           fi
 
-      - name: Running compose install
+      - name: Running phpunit
         run: ./vendor/bin/phpunit tests
 
 
