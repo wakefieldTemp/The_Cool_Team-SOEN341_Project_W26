@@ -55,7 +55,7 @@ The application aims to simplify meal planning by taking into account dietary re
 
 ---
 
-### 3. Weekly Meal Planner
+### 3. Weekly Meal Planner ✅ Completed
 - Create a weekly meal plan
 - View meals in a weekly grid
 - Assign recipes by:
@@ -73,6 +73,6 @@ The application aims to simplify meal planning by taking into account dietary re
 - Associate calorie values with recipes
 - Provide an overview of nutritional consumption
 
-### Ingredient-Based Recipe Suggestions
+### Ingredient-Based Recipe Suggestions ✅ Completed
 - Users enter available ingredients
 - The system suggests recipes that can be prepared using those ingredients
