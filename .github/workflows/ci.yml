@@ -14,8 +14,8 @@ jobs:
       MYSQL_DATABASE: mealmajor_test
       MYSQL_USER: root
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
-      MYSQL_PASSWORD: 
-      MYSQL_ROOT_PASSWORD: 
+      MYSQL_PASSWORD: 1313
+      MYSQL_ROOT_PASSWORD: 1414
       MYSQL_PORT: 3306
 
     steps:
