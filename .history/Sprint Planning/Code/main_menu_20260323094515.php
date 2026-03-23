@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $ins->execute();
         }
 		else{ 
-			$_SESSION['duplicate_error'] = "You already have this recipe in your schedule.";
+			$_SESSION[duplicate_error] = "You already have this recipe in your schedule.";
 		}
     }
 
@@ -77,10 +77,6 @@ $user_recipes->execute();
 $recipes_result = $user_recipes->get_result();
 $user_recipe_list = [];
 while ($r = $recipes_result->fetch_assoc()) $user_recipe_list[] = $r;
-
-$schedule_error = $_SESSION['schedule_error'] ?? null;
-unset($_SESSION['schedule_error']);
-
 
 date_default_timezone_set('America/Toronto'); //Adjusted for our timezone
 $today = date('l');
@@ -142,11 +138,6 @@ $today = date('l');
 	<div class="main-content">
     <div class="schedule-wrapper">
         <h2 class="schedule-title">Weekly Meal Schedule</h2>
-		<?php if ($schedule_error): ?>
-    		<div class="schedule-error">
-         		<?= htmlspecialchars($schedule_error) ?>
-    		</div>
-		<?php endif; ?>
         <div class="week-grid">
             <?php foreach ($days as $day): ?>
             <div class="day-col <?= $day === $today ? 'today' : '' ?>">
