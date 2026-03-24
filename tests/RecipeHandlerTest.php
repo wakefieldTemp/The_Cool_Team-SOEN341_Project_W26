@@ -30,18 +30,28 @@ $_POST['meal_type'] = 'dinner';
 
 include __DIR__ . '/subject.php';
 
-echo json_encode([
-    'show_current_recipe' => $show_current_recipe,
-    'recipe' => $recipe,
-    'recipe_ingredients' => $recipe_ingredients,
-    'meal_type' => $meal_type,
-    'createRecipeArgs' => $GLOBALS['createRecipeArgs'] ?? null,
-]);
+file_put_contents(
+    __DIR__ . '/result.json',
+    json_encode([
+        'show_current_recipe' => $show_current_recipe,
+        'recipe' => $recipe,
+        'recipe_ingredients' => $recipe_ingredients,
+        'meal_type' => $meal_type,
+        'createRecipeArgs' => $GLOBALS['createRecipeArgs'] ?? null,
+    ], JSON_PRETTY_PRINT)
+);
 PHP;
 
         file_put_contents($sandbox . '/runner.php', $runner);
-        $json = shell_exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'));
-        $data = json_decode((string) $json, true);
+        exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'), $output, $exitCode);
+
+        $this->assertSame(0, $exitCode, 'Runner failed: ' . implode("\n", $output));
+
+        $resultFile = $sandbox . '/result.json';
+        $this->assertFileExists($resultFile, 'Result file was not created.');
+
+        $data = json_decode((string) file_get_contents($resultFile), true);
+        $this->assertIsArray($data, 'Decoded result.json is not an array.');
 
         $this->assertTrue($data['show_current_recipe']);
         $this->assertSame(['tomato', 'rice', 'beans'], $data['recipe_ingredients']);
@@ -68,15 +78,25 @@ $_POST['meal_type'] = 'lunch';
 
 include __DIR__ . '/subject.php';
 
-echo json_encode([
-    'recipe_ingredients' => $recipe_ingredients,
-    'createRecipeArgs' => $GLOBALS['createRecipeArgs'] ?? null,
-]);
+file_put_contents(
+    __DIR__ . '/result.json',
+    json_encode([
+        'recipe_ingredients' => $recipe_ingredients,
+        'createRecipeArgs' => $GLOBALS['createRecipeArgs'] ?? null,
+    ], JSON_PRETTY_PRINT)
+);
 PHP;
 
         file_put_contents($sandbox . '/runner.php', $runner);
-        $json = shell_exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'));
-        $data = json_decode((string) $json, true);
+        exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'), $output, $exitCode);
+
+        $this->assertSame(0, $exitCode, 'Runner failed: ' . implode("\n", $output));
+
+        $resultFile = $sandbox . '/result.json';
+        $this->assertFileExists($resultFile, 'Result file was not created.');
+
+        $data = json_decode((string) file_get_contents($resultFile), true);
+        $this->assertIsArray($data, 'Decoded result.json is not an array.');
 
         $this->assertSame([], $data['recipe_ingredients']);
         $this->assertSame('', $data['createRecipeArgs'][1]);
@@ -115,9 +135,15 @@ include __DIR__ . '/subject.php';
 PHP;
 
         file_put_contents($sandbox . '/runner.php', $runner);
-        shell_exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'));
+        exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'), $output, $exitCode);
 
-        $log = json_decode((string) file_get_contents($sandbox . '/addRecipe_log.json'), true);
+        $this->assertSame(0, $exitCode, 'Runner failed: ' . implode("\n", $output));
+
+        $logFile = $sandbox . '/addRecipe_log.json';
+        $this->assertFileExists($logFile, 'addRecipe log file was not created.');
+
+        $log = json_decode((string) file_get_contents($logFile), true);
+        $this->assertIsArray($log, 'Decoded addRecipe_log.json is not an array.');
 
         $this->assertSame(7, $log[0]);
         $this->assertSame('Protein Oats', $log[1]);
@@ -148,13 +174,14 @@ PHP;
 
         $stubs = <<<'PHP'
 <?php
+
 function createRecipe($userId, $recipeIngredientsString, $mealType) {
     $GLOBALS['createRecipeArgs'] = func_get_args();
     return ['generated' => true];
 }
 
 function addRecipe(...$args) {
-    file_put_contents(__DIR__ . '/addRecipe_log.json', json_encode($args));
+    file_put_contents(__DIR__ . '/addRecipe_log.json', json_encode($args, JSON_PRETTY_PRINT));
 }
 PHP;
 
