@@ -5,13 +5,13 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
 final class DeleteRecipeTest extends TestCase
-{ 
+{
     private string $sourceFile;
 
     protected function setUp(): void
     {
         $this->sourceFile = __DIR__ . '/../Sprint Planning/Code/recipe_creation.php';
-        $this->assertFileExists($this->sourceFile, 'Update $sourceFile to the real script path.');
+        $this->assertFileExists($this->sourceFile, 'Check your path.');
     }
 
     public function testRedirectsWhenRecipeIdIsMissing(): void
@@ -27,9 +27,8 @@ $_SESSION['user_id'] = 15;
 
 ob_start();
 include __DIR__ . '/subject.php';
-$output = ob_get_clean();
+ob_get_clean();
 
-file_put_contents(__DIR__ . '/output.txt', $output);
 file_put_contents(__DIR__ . '/finished.txt', 'reached-end');
 PHP;
 
@@ -38,9 +37,8 @@ PHP;
 
         $this->assertSame(0, $exitCode, implode("\n", $output));
 
-        // If subject.php calls exit on missing recipe_id, runner.php never reaches these lines
+        // Script should exit early → runner should NOT continue
         $this->assertFileDoesNotExist($sandbox . '/finished.txt');
-        $this->assertFileDoesNotExist($sandbox . '/output.txt');
         $this->assertFileDoesNotExist($sandbox . '/deleteRecipe_log.json');
     }
 
@@ -58,9 +56,8 @@ $_GET['recipe_id'] = 42;
 
 ob_start();
 include __DIR__ . '/subject.php';
-$output = ob_get_clean();
+ob_get_clean();
 
-file_put_contents(__DIR__ . '/output.txt', $output);
 file_put_contents(__DIR__ . '/finished.txt', 'reached-end');
 PHP;
 
@@ -73,14 +70,11 @@ PHP;
         $this->assertFileExists($logFile);
 
         $args = json_decode((string) file_get_contents($logFile), true);
-        $this->assertIsArray($args);
 
         $this->assertSame(7, $args[0]);
         $this->assertSame(42, $args[1]);
 
-        // If subject.php exits after delete, runner.php should not continue
         $this->assertFileDoesNotExist($sandbox . '/finished.txt');
-        $this->assertFileDoesNotExist($sandbox . '/output.txt');
     }
 
     public function testDeletesRecipeWithPostRecipeId(): void
@@ -97,9 +91,8 @@ $_POST['recipe_id'] = 88;
 
 ob_start();
 include __DIR__ . '/subject.php';
-$output = ob_get_clean();
+ob_get_clean();
 
-file_put_contents(__DIR__ . '/output.txt', $output);
 file_put_contents(__DIR__ . '/finished.txt', 'reached-end');
 PHP;
 
@@ -112,13 +105,11 @@ PHP;
         $this->assertFileExists($logFile);
 
         $args = json_decode((string) file_get_contents($logFile), true);
-        $this->assertIsArray($args);
 
         $this->assertSame(21, $args[0]);
         $this->assertSame(88, $args[1]);
 
         $this->assertFileDoesNotExist($sandbox . '/finished.txt');
-        $this->assertFileDoesNotExist($sandbox . '/output.txt');
     }
 
     private function makeSandbox(): string
@@ -128,18 +119,20 @@ PHP;
 
         copy($this->sourceFile, $dir . '/subject.php');
 
+        // ✅ FIX: stub api_config.php
+        file_put_contents($dir . '/api_config.php', "<?php\n");
+
+        // existing stubs
         file_put_contents($dir . '/login_page_config.php', "<?php\n");
 
-        $sqlRecipeFunctions = <<<'PHP'
+        file_put_contents($dir . '/sql_recipe_functions.php', <<<'PHP'
 <?php
 
 function deleteRecipe(...$args): void
 {
-    file_put_contents(__DIR__ . '/deleteRecipe_log.json', json_encode($args, JSON_PRETTY_PRINT));
+    file_put_contents(__DIR__ . '/deleteRecipe_log.json', json_encode($args));
 }
-PHP;
-
-        file_put_contents($dir . '/sql_recipe_functions.php', $sqlRecipeFunctions);
+PHP);
 
         return $dir;
     }
