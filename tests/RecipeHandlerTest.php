@@ -40,8 +40,7 @@ echo json_encode([
 PHP;
 
         file_put_contents($sandbox . '/runner.php', $runner);
-        $json = shell_exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'));
-        $data = json_decode((string) $json, true);
+        $data = $this->runRunnerAndDecodeJson($sandbox . '/runner.php');
 
         $this->assertTrue($data['show_current_recipe']);
         $this->assertSame(['tomato', 'rice', 'beans'], $data['recipe_ingredients']);
@@ -75,8 +74,7 @@ echo json_encode([
 PHP;
 
         file_put_contents($sandbox . '/runner.php', $runner);
-        $json = shell_exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'));
-        $data = json_decode((string) $json, true);
+        $data = $this->runRunnerAndDecodeJson($sandbox . '/runner.php');
 
         $this->assertSame([], $data['recipe_ingredients']);
         $this->assertSame('', $data['createRecipeArgs'][1]);
@@ -115,10 +113,21 @@ include __DIR__ . '/subject.php';
 PHP;
 
         file_put_contents($sandbox . '/runner.php', $runner);
-        shell_exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'));
 
-        $log = json_decode((string) file_get_contents($sandbox . '/addRecipe_log.json'), true);
+        exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php') . ' 2>&1', $output, $exitCode);
 
+        $this->assertSame(
+            0,
+            $exitCode,
+            "Runner failed.\nOutput:\n" . implode("\n", $output)
+        );
+
+        $logFile = $sandbox . '/addRecipe_log.json';
+        $this->assertFileExists($logFile, 'addRecipe was not called.');
+
+        $log = json_decode((string) file_get_contents($logFile), true);
+
+        $this->assertIsArray($log);
         $this->assertSame(7, $log[0]);
         $this->assertSame('Protein Oats', $log[1]);
         $this->assertSame('Quick breakfast', $log[2]);
@@ -134,6 +143,33 @@ PHP;
         $this->assertSame('breakfast', $log[12]);
         $this->assertSame(['oats', 'milk'], $log[13]);
         $this->assertSame(['mix', 'cook'], $log[14]);
+    }
+
+    private function runRunnerAndDecodeJson(string $runnerPath): array
+    {
+        exec(PHP_BINARY . ' ' . escapeshellarg($runnerPath) . ' 2>&1', $output, $exitCode);
+        $rawOutput = implode("\n", $output);
+
+        $this->assertSame(
+            0,
+            $exitCode,
+            "Runner failed.\nOutput:\n" . $rawOutput
+        );
+
+        $this->assertNotSame(
+            '',
+            trim($rawOutput),
+            'Runner returned empty output instead of JSON.'
+        );
+
+        $data = json_decode($rawOutput, true);
+
+        $this->assertIsArray(
+            $data,
+            "Runner did not return valid JSON.\nOutput was:\n" . $rawOutput
+        );
+
+        return $data;
     }
 
     private function makeSandbox(): string
