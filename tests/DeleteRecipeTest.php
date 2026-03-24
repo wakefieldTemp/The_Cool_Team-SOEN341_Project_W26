@@ -10,7 +10,7 @@ final class DeleteRecipeTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sourceFile = __DIR__ . '/../Sprint Planning/Code/recipe_creation.php';
+        $this->sourceFile = __DIR__ . '/../Sprint Planning/Code/recipe.php';
         $this->assertFileExists($this->sourceFile, 'Check your path.');
     }
 
