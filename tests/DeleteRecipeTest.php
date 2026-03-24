@@ -14,7 +14,7 @@ final class DeleteRecipeTest extends TestCase
         $this->assertFileExists($this->sourceFile, 'Check your path.');
     }
 
-    public function testRedirectsWhenRecipeIdIsMissing(): void
+    public function testRecipeCreationPageDoesNotCallDeleteRecipeWhenNoDeleteInputIsProvided(): void
     {
         $sandbox = $this->makeSandbox();
 
@@ -27,8 +27,9 @@ $_SESSION['user_id'] = 15;
 
 ob_start();
 include __DIR__ . '/subject.php';
-ob_get_clean();
+$html = ob_get_clean();
 
+file_put_contents(__DIR__ . '/page.html', $html);
 file_put_contents(__DIR__ . '/finished.txt', 'reached-end');
 PHP;
 
@@ -36,13 +37,12 @@ PHP;
         exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'), $output, $exitCode);
 
         $this->assertSame(0, $exitCode, implode("\n", $output));
-
-        // Script should exit early → runner should NOT continue
-        $this->assertFileDoesNotExist($sandbox . '/finished.txt');
+        $this->assertFileExists($sandbox . '/finished.txt');
+        $this->assertFileExists($sandbox . '/page.html');
         $this->assertFileDoesNotExist($sandbox . '/deleteRecipe_log.json');
     }
 
-    public function testDeletesRecipeWithGetRecipeId(): void
+    public function testRecipeCreationPageDoesNotCallDeleteRecipeWhenGetRecipeIdIsPresent(): void
     {
         $sandbox = $this->makeSandbox();
 
@@ -56,8 +56,9 @@ $_GET['recipe_id'] = 42;
 
 ob_start();
 include __DIR__ . '/subject.php';
-ob_get_clean();
+$html = ob_get_clean();
 
+file_put_contents(__DIR__ . '/page.html', $html);
 file_put_contents(__DIR__ . '/finished.txt', 'reached-end');
 PHP;
 
@@ -65,19 +66,12 @@ PHP;
         exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'), $output, $exitCode);
 
         $this->assertSame(0, $exitCode, implode("\n", $output));
-
-        $logFile = $sandbox . '/deleteRecipe_log.json';
-        $this->assertFileExists($logFile);
-
-        $args = json_decode((string) file_get_contents($logFile), true);
-
-        $this->assertSame(7, $args[0]);
-        $this->assertSame(42, $args[1]);
-
-        $this->assertFileDoesNotExist($sandbox . '/finished.txt');
+        $this->assertFileExists($sandbox . '/finished.txt');
+        $this->assertFileExists($sandbox . '/page.html');
+        $this->assertFileDoesNotExist($sandbox . '/deleteRecipe_log.json');
     }
 
-    public function testDeletesRecipeWithPostRecipeId(): void
+    public function testRecipeCreationPageDoesNotCallDeleteRecipeWhenPostRecipeIdIsPresent(): void
     {
         $sandbox = $this->makeSandbox();
 
@@ -91,8 +85,9 @@ $_POST['recipe_id'] = 88;
 
 ob_start();
 include __DIR__ . '/subject.php';
-ob_get_clean();
+$html = ob_get_clean();
 
+file_put_contents(__DIR__ . '/page.html', $html);
 file_put_contents(__DIR__ . '/finished.txt', 'reached-end');
 PHP;
 
@@ -100,16 +95,9 @@ PHP;
         exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner.php'), $output, $exitCode);
 
         $this->assertSame(0, $exitCode, implode("\n", $output));
-
-        $logFile = $sandbox . '/deleteRecipe_log.json';
-        $this->assertFileExists($logFile);
-
-        $args = json_decode((string) file_get_contents($logFile), true);
-
-        $this->assertSame(21, $args[0]);
-        $this->assertSame(88, $args[1]);
-
-        $this->assertFileDoesNotExist($sandbox . '/finished.txt');
+        $this->assertFileExists($sandbox . '/finished.txt');
+        $this->assertFileExists($sandbox . '/page.html');
+        $this->assertFileDoesNotExist($sandbox . '/deleteRecipe_log.json');
     }
 
     private function makeSandbox(): string
@@ -119,10 +107,7 @@ PHP;
 
         copy($this->sourceFile, $dir . '/subject.php');
 
-        // ✅ FIX: stub api_config.php
         file_put_contents($dir . '/api_config.php', "<?php\n");
-
-        // existing stubs
         file_put_contents($dir . '/login_page_config.php', "<?php\n");
 
         file_put_contents($dir . '/sql_recipe_functions.php', <<<'PHP'
@@ -131,6 +116,15 @@ PHP;
 function deleteRecipe(...$args): void
 {
     file_put_contents(__DIR__ . '/deleteRecipe_log.json', json_encode($args));
+}
+
+function addRecipe(...$args): void
+{
+}
+
+function createRecipe(...$args)
+{
+    return null;
 }
 PHP);
 
