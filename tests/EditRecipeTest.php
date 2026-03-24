@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-final class EditRecipeTest extends TestCase
+final class EditRecipeTest.php extends TestCase
 {
     private string $sourceFile;
 
