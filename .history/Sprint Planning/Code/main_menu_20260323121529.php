@@ -12,11 +12,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Same error function used in the login page, shoutout Fred
-function showError($error){
-    return !empty($error) ? "<p class='error-message'>$error</p>" : '';
-}
-
 //Weekly schedule
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
@@ -25,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $day        = $_POST['day_of_week'];
         $meal_type  = $_POST['meal_type'];
 
-        //Big no no for two meals in the same day for the same meal_type
+        // no duplicates in the same day for the same meal_type
         $check = $conn->prepare("SELECT schedule_id FROM meal_schedule WHERE user_id=? AND (recipe_id=? OR (day_of_week=? AND meal_type=?))");
         $check->bind_param('iiss', $userId, $recipe_id, $day, $meal_type);
         $check->execute();
@@ -52,13 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit();
 }
 
-// Grab and clear the error, again shoutout Fred
-$errors = ['schedule' => $_SESSION['duplicate_error'] ?? ''];
-unset($_SESSION['duplicate_error']);
-
-// CHARLES DON"T FORGET TO DELETE THIS
-//var_dump($errors);
-
 
 $meals_query = $conn->prepare(" 
     SELECT ms.schedule_id, ms.day_of_week, ms.meal_type, r.recipe_name
@@ -66,7 +54,7 @@ $meals_query = $conn->prepare("
     JOIN recipes r ON ms.recipe_id = r.recipe_id
     WHERE ms.user_id = ?
     ORDER BY FIELD(ms.day_of_week,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
-             FIELD(ms.meal_type,'Breakfast','Lunch','Dinner','Snack') ");
+             FIELD(ms.meal_type,'Breakfast','Lunch','Diner','Snack') ");
 $meals_query->bind_param('i', $userId);
 $meals_query->execute();
 $meals_result = $meals_query->get_result(); //find every meal
@@ -75,7 +63,7 @@ $meals_result = $meals_query->get_result(); //find every meal
 //array of days (collumns) and meal_type (row) for the schedule table
 $schedule = [];
 $days      = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-$meal_types = ['Breakfast','Lunch','Dinner','Snack'];
+$meal_types = ['Breakfast','Lunch','Diner','Snack'];
 foreach ($days as $d) $schedule[$d] = [];
 while ($row = $meals_result->fetch_assoc()) {
     $schedule[$row['day_of_week']][] = $row;
@@ -90,8 +78,11 @@ $recipes_result = $user_recipes->get_result();
 $user_recipe_list = [];
 while ($r = $recipes_result->fetch_assoc()) $user_recipe_list[] = $r;
 
+$schedule_error = $_SESSION['schedule_error'] ?? null;
+unset($_SESSION['schedule_error']);
 
-date_default_timezone_set('America/Toronto'); //Adjusted for mtl time (mtl not available but whatever)
+
+date_default_timezone_set('America/Toronto'); //Adjusted for our timezone
 $today = date('l');
 ?>
 
@@ -151,7 +142,11 @@ $today = date('l');
 	<div class="main-content">
     <div class="schedule-wrapper">
         <h2 class="schedule-title">Weekly Meal Schedule</h2>
-		<?= showError($errors['schedule']) ?>
+		<?php if ($schedule_error): ?>
+    		<div class="schedule-error">
+         		<?= htmlspecialchars($schedule_error) ?>
+    		</div>
+		<?php endif; ?>
         <div class="week-grid">
             <?php foreach ($days as $day): ?>
             <div class="day-col <?= $day === $today ? 'today' : '' ?>">

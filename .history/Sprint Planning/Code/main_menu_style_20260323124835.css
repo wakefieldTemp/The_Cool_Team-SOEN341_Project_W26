@@ -31,7 +31,6 @@ a.profile-btn {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 200;
 }
 
 a.profile-btn:hover {
@@ -48,7 +47,6 @@ a.profile-btn:hover {
     background-color: whitesmoke;
     padding: .4rem .8rem;
     transition: 0.50s ease;
-    z-index: 100;
 }
 
 .sidebar ul li{
@@ -134,7 +132,7 @@ a.profile-btn:hover {
 
 .sidebar.active ul li .tooltip{
     display: none;
-} 
+}
 
 #log-out a:hover{
     background-color: rgb(255, 0, 0);
@@ -186,7 +184,7 @@ a.profile-btn:hover {
     margin-top: -4px;
 }
 
-/* Start of Schedule YOUPI */
+/* Schedule */
 .main-content {
     margin-left: 80px;
     padding: 2rem;
@@ -345,6 +343,4 @@ a.profile-btn:hover {
     margin-bottom: 1rem;
     font-size: 0.85rem;
     text-align: center;
-    display: block;
-    width: 100%;
 }

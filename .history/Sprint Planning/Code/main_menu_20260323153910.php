@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $day        = $_POST['day_of_week'];
         $meal_type  = $_POST['meal_type'];
 
-        //Big no no for two meals in the same day for the same meal_type
+        // no duplicates in the same day for the same meal_type
         $check = $conn->prepare("SELECT schedule_id FROM meal_schedule WHERE user_id=? AND (recipe_id=? OR (day_of_week=? AND meal_type=?))");
         $check->bind_param('iiss', $userId, $recipe_id, $day, $meal_type);
         $check->execute();
@@ -52,11 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit();
 }
 
-// Grab and clear the error, again shoutout Fred
+// Grab and clear the error, same pattern as index.php
 $errors = ['schedule' => $_SESSION['duplicate_error'] ?? ''];
 unset($_SESSION['duplicate_error']);
 
-// CHARLES DON"T FORGET TO DELETE THIS
+// CHARLES DON"T FORGET TO DESTROY THIS
 //var_dump($errors);
 
 
@@ -91,7 +91,7 @@ $user_recipe_list = [];
 while ($r = $recipes_result->fetch_assoc()) $user_recipe_list[] = $r;
 
 
-date_default_timezone_set('America/Toronto'); //Adjusted for mtl time (mtl not available but whatever)
+date_default_timezone_set('America/Toronto'); //Adjusted for our timezone
 $today = date('l');
 ?>
 
