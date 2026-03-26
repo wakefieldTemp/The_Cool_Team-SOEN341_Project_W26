@@ -53,6 +53,11 @@ if(isset($_POST['create_recipe'])) {
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
+    <div class="menu-button">
+        <a href="main_menu.php">
+            <i class='bx bx-arrow-back'></i> Back to Main Menu
+        </a>
+    </div>
     <div class="introduction">
         <h1>Welcome to your meal planner!</h1>
         <p>Here you can add ingredients that you own, and the system will help you create delicious recipes.</p>

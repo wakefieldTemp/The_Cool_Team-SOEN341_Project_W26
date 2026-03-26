@@ -7,8 +7,26 @@ date_default_timezone_set('America/Toronto');
 $today = date('l');
 $today_date = date('Y-m-d');
 
-$check_today_row = $conn->prepare("SELECT log_date, total_calories FROM user_daily_calories WHERE user_id = ? AND log_date = ?");
-$check_today_row->bind_param('is', $userId, $today_date);
+if (isset($_POST['add_calories'])) {
+    $calories = intval($_POST['calories_added']);
+    $add_stmt = $conn->prepare("UPDATE user_daily_calories SET total_calories = total_calories + ? WHERE user_id = ? AND log_date = ?");
+    $add_stmt->bind_param('iis', $calories, $userId, $today_date);
+    $add_stmt->execute();
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+if (isset($_POST['remove_calories'])) {
+    $calories = intval($_POST['calories_removed']);
+    $remove_stmt = $conn->prepare("UPDATE user_daily_calories SET total_calories = total_calories - ? WHERE user_id = ? AND log_date = ?");
+    $remove_stmt->bind_param('iis', $calories, $userId, $today_date);
+    $remove_stmt->execute();
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+$check_today_row = $conn->prepare("SELECT log_date, total_calories FROM user_daily_calories WHERE user_id = ?");
+$check_today_row->bind_param('i', $userId);
 $check_today_row->execute();
 $existing_row = $check_today_row->get_result()->fetch_assoc();
 
@@ -25,24 +43,10 @@ if (!$existing_row) {
     $insert_row = $conn->prepare("INSERT INTO user_daily_calories (user_id, log_date, total_calories) VALUES (?, ?, ?)");
     $insert_row->bind_param('isi', $userId, $today_date, $scheduled_calories['total']);
     $insert_row->execute();
-} else {
-    $reset_row = $conn->prepare("UPDATE user_daily_calories SET total_calories = ? WHERE user_id = ? AND log_date = ?");
-    $reset_row->bind_param('iis', $scheduled_calories['total'], $userId, $today_date);
+} elseif ($existing_row['log_date'] !== $today_date) {
+    $reset_row = $conn->prepare("UPDATE user_daily_calories SET log_date = ?, total_calories = ? WHERE user_id = ?");
+    $reset_row->bind_param('sii', $today_date, $scheduled_calories['total'], $userId);
     $reset_row->execute();
-}
-
-if (isset($_POST['add_calories'])) {
-    $calories = intval($_POST['calories_added']);
-    $add_stmt = $conn->prepare("UPDATE user_daily_calories SET total_calories = total_calories + ? WHERE user_id = ? AND log_date = ?");
-    $add_stmt->bind_param('iis', $calories, $userId, $today_date);
-    $add_stmt->execute();
-}
-
-if (isset($_POST['remove_calories'])) {
-    $calories = intval($_POST['calories_removed']);
-    $remove_stmt = $conn->prepare("UPDATE user_daily_calories SET total_calories = total_calories - ? WHERE user_id = ? AND log_date = ?");
-    $remove_stmt->bind_param('iis', $calories, $userId, $today_date);
-    $remove_stmt->execute();
 }
 
 $get_total_calories = $conn->prepare("SELECT total_calories FROM user_daily_calories WHERE user_id = ? AND log_date = ?");
@@ -58,15 +62,15 @@ $current_goal = $goal_row['daily_goal'] ?? 0;
 
 $prompt = "User ate $total_calories/$current_goal kcal today. Give a short motivational message + 1 tip. Be warm and concise.";
 $data = [
-        "model" => "claude-haiku-4-5-20251001",
-        "max_tokens" => 1000,
-        "messages" => [
-            [
-                "role" => "user",
-                "content" => $prompt
-            ]
+    "model" => "claude-haiku-4-5-20251001",
+    "max_tokens" => 1000,
+    "messages" => [
+        [
+            "role" => "user",
+            "content" => $prompt
         ]
-    ];
+    ]
+];
 
 $ch = curl_init("https://api.anthropic.com/v1/messages");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
