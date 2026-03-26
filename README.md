@@ -68,7 +68,7 @@ The application aims to simplify meal planning by taking into account dietary re
 
 ## Additional Planned Features
 
-### Calorie Tracker
+### Calorie Tracker ✅ Completed
 - Track daily and weekly calorie intake
 - Associate calorie values with recipes
 - Provide an overview of nutritional consumption
