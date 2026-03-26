@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $day        = $_POST['day_of_week'];
         $meal_type  = $_POST['meal_type'];
 
-        // no duplicates in the same day for the same meal_type
+        //Big no no for two meals in the same day for the same meal_type
         $check = $conn->prepare("SELECT schedule_id FROM meal_schedule WHERE user_id=? AND (recipe_id=? OR (day_of_week=? AND meal_type=?))");
         $check->bind_param('iiss', $userId, $recipe_id, $day, $meal_type);
         $check->execute();
@@ -52,11 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit();
 }
 
-// Grab and clear the error, same pattern as index.php
+// Grab and clear the error, again shoutout Fred
 $errors = ['schedule' => $_SESSION['duplicate_error'] ?? ''];
 unset($_SESSION['duplicate_error']);
 
-// *CHARLES DON"T FORGET TO DESTROY THIS
+// CHARLES DON"T FORGET TO DELETE THIS
 var_dump($errors);
 
 
@@ -66,7 +66,7 @@ $meals_query = $conn->prepare("
     JOIN recipes r ON ms.recipe_id = r.recipe_id
     WHERE ms.user_id = ?
     ORDER BY FIELD(ms.day_of_week,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
-             FIELD(ms.meal_type,'Breakfast','Lunch','Diner','Snack') ");
+             FIELD(ms.meal_type,'Breakfast','Lunch','Dinner','Snack') ");
 $meals_query->bind_param('i', $userId);
 $meals_query->execute();
 $meals_result = $meals_query->get_result(); //find every meal
@@ -75,7 +75,7 @@ $meals_result = $meals_query->get_result(); //find every meal
 //array of days (collumns) and meal_type (row) for the schedule table
 $schedule = [];
 $days      = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-$meal_types = ['Breakfast','Lunch','Diner','Snack'];
+$meal_types = ['Breakfast','Lunch','Dinner','Snack'];
 foreach ($days as $d) $schedule[$d] = [];
 while ($row = $meals_result->fetch_assoc()) {
     $schedule[$row['day_of_week']][] = $row;
@@ -91,7 +91,7 @@ $user_recipe_list = [];
 while ($r = $recipes_result->fetch_assoc()) $user_recipe_list[] = $r;
 
 
-date_default_timezone_set('America/Toronto'); //Adjusted for our timezone
+date_default_timezone_set('America/Toronto'); //Adjusted for mtl time (mtl not available but whatever)
 $today = date('l');
 ?>
 
@@ -104,7 +104,7 @@ $today = date('l');
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Main Menu</title>
-    <link rel="stylesheet" href="main_menu_style.css?=v2">
+    <link rel="stylesheet" href="main_menu_style.css">
 	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
