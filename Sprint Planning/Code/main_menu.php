@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'login_page_config.php';
+require 'sql_meals_functions.php';
 $userId = $_SESSION['user_id'];
 // Tried to make it after logging out, you can't come back on this page (doesn't work D;)
 header("Cache-Control: no-cache, no-store, must-revalidate");
@@ -24,28 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $recipe_id  = intval($_POST['recipe_id']);
         $day        = $_POST['day_of_week'];
         $meal_type  = $_POST['meal_type'];
-
-        //Big no no for two meals in the same day for the same meal_type
-        $check = $conn->prepare("SELECT schedule_id FROM meal_schedule WHERE user_id=? AND (recipe_id=? OR (day_of_week=? AND meal_type=?))");
-        $check->bind_param('iiss', $userId, $recipe_id, $day, $meal_type);
-        $check->execute();
-        $check->store_result();
-
-        if ($check->num_rows === 0) {
-            $ins = $conn->prepare("INSERT INTO meal_schedule (user_id, recipe_id, day_of_week, meal_type) VALUES (?,?,?,?)");
-            $ins->bind_param('iiss', $userId, $recipe_id, $day, $meal_type);
-            $ins->execute();
-        }
-		else{ 
-			$_SESSION['duplicate_error'] = "You already have this recipe in your schedule.";
-		}
+        addMealToSchedule($conn, $userId, $recipe_id, $day, $meal_type);
     }
 
     if ($_POST['action'] === 'delete') { //destroy that thing
-        $schedule_id = intval($_POST['schedule_id']);
-        $del = $conn->prepare("DELETE FROM meal_schedule WHERE schedule_id=? AND user_id=?");
-        $del->bind_param('ii', $schedule_id, $userId);
-        $del->execute();
+		deleteMealFromSchedule($conn, $userId, $schedule_id);
     }
     
     header("Location: main_menu.php");
@@ -59,18 +43,7 @@ unset($_SESSION['duplicate_error']);
 // CHARLES DON"T FORGET TO DELETE THIS
 //var_dump($errors);
 
-
-$meals_query = $conn->prepare(" 
-    SELECT ms.schedule_id, ms.day_of_week, ms.meal_type, r.recipe_name
-    FROM meal_schedule ms
-    JOIN recipes r ON ms.recipe_id = r.recipe_id
-    WHERE ms.user_id = ?
-    ORDER BY FIELD(ms.day_of_week,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
-             FIELD(ms.meal_type,'Breakfast','Lunch','Dinner','Snack') ");
-$meals_query->bind_param('i', $userId);
-$meals_query->execute();
-$meals_result = $meals_query->get_result(); //find every meal
-
+$meals_result = getMealsForSchedule($conn, $userId); //find every meal
 
 //array of days (collumns) and meal_type (row) for the schedule table
 $schedule = [];
@@ -81,7 +54,6 @@ while ($row = $meals_result->fetch_assoc()) {
     $schedule[$row['day_of_week']][] = $row;
 }
 
-
 // recipes in the cool "Add" dropdown menu
 $user_recipes = $conn->prepare("SELECT recipe_id, recipe_name FROM recipes WHERE user_id=? ORDER BY recipe_name ASC");
 $user_recipes->bind_param('i', $userId);
@@ -89,7 +61,6 @@ $user_recipes->execute();
 $recipes_result = $user_recipes->get_result();
 $user_recipe_list = [];
 while ($r = $recipes_result->fetch_assoc()) $user_recipe_list[] = $r;
-
 
 date_default_timezone_set('America/Toronto'); //Adjusted for mtl time (mtl not available but whatever)
 $today = date('l');
