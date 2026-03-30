@@ -47,7 +47,7 @@ function getTotalCalories($conn, $userId, $today_date) {
 }
 
 function getDailyGoal($conn, $userId) {
-    $goal_stmt = $conn->prepare("SELECT daily_goal FROM user_goals WHERE user_id = ?");
+    $goal_stmt = $conn->prepare("SELECT daily_goal FROM calorie_goals WHERE user_id = ?");
     $goal_stmt->bind_param('i', $userId);
     $goal_stmt->execute();
     $goal_row = $goal_stmt->get_result()->fetch_assoc();
