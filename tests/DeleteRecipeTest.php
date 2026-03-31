@@ -10,7 +10,7 @@ final class DeleteRecipeTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sourceFile = __DIR__ . '/../Sprint Planning/Code/recipes.php';
+        $this->sourceFile = __DIR__ . '/../project/src/views/recipes.php';
         $this->assertFileExists($this->sourceFile, 'Check your path to recipes.php.');
     }
 
@@ -150,6 +150,25 @@ PHP;
 
         copy($this->sourceFile, $dir . '/subject.php');
 
+        // Patch require paths for sandbox
+        $subject = file_get_contents($dir . '/subject.php');
+        $subject = str_replace(
+            "require_once __DIR__ . '/../../config/login_page_config.php'",
+            "require_once __DIR__ . '/login_page_config.php'",
+            $subject
+        );
+        $subject = str_replace(
+            "require_once __DIR__ . '/../../config/api_config.php'",
+            "require_once __DIR__ . '/api_config.php'",
+            $subject
+        );
+        $subject = str_replace(
+            "require_once __DIR__ . '/../models/sql_recipe_functions.php'",
+            "require_once __DIR__ . '/sql_recipe_functions.php'",
+            $subject
+        );
+        file_put_contents($dir . '/subject.php', $subject);
+
         file_put_contents($dir . '/api_config.php', "<?php\n");
 
         file_put_contents($dir . '/sql_recipe_functions.php', <<<'PHP'
@@ -175,6 +194,8 @@ PHP);
 
         file_put_contents($dir . '/login_page_config.php', <<<'PHP'
 <?php
+
+define('BASE_URL', '');
 
 class FakeResultSet
 {

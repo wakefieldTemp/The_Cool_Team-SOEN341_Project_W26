@@ -1,7 +1,7 @@
 {
   "autoload": {
     "classmap": [
-      "Sprint Planning/Code/"
+      "project/src/"
     ]
   },
   "require-dev": {
