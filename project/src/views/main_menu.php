@@ -9,7 +9,7 @@ header("Pragma: no-cache");
 header("Expires: 0");
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+    header("Location: " . BASE_URL . "/index.php");
     exit();
 }
 
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 		deleteMealFromSchedule($conn, $userId, $schedule_id);
     }
     
-    header("Location: main_menu.php");
+    header("Location: " . BASE_URL . "/src/views/main_menu.php");
     exit();
 }
 
@@ -75,7 +75,7 @@ $today = date('l');
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Main Menu</title>
-    <link rel="stylesheet" href="/public/css/main_menu_style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/main_menu_style.css">
 	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
@@ -90,28 +90,28 @@ $today = date('l');
 		</div>
 		<ul>
 			<li>
-				<a href="/src/views/recipes.php">
+				<a href="<?= BASE_URL ?>/src/views/recipes.php">
 					<i class='bx bx-fork' ></i>
 					<span class="links_name">Your recipes</span>
 				</a>
 				<span class="tooltip">Your recipes</span>
 			</li>
 			<li>
-				<a href="/src/views/calorie_tracker.php">
+				<a href="<?= BASE_URL ?>/src/views/calorie_tracker.php">
 					<i class='bx bxs-heart'></i>
 					<span class="links_name">Calorie Tracker</span>
 				</a>
 				<span class="tooltip">Calorie Tracker</span>
 			</li>
 			<li>
-				<a href="/src/views/recipe_creation.php">
+				<a href="<?= BASE_URL ?>/src/views/recipe_creation.php">
 					<i class='bx bxs-bowl-rice' ></i>
 					<span class="links_name">Recipe Creator</span>
 				</a>
 				<span class="tooltip">Recipe Creator</span>
 			</li>
 			<li id="log-out">
-				<a href="/src/controllers/log_out.php">
+				<a href="<?= BASE_URL ?>/src/controllers/log_out.php">
 					<i class='bx bx-log-out' ></i>
 					<span class="links_name">Log Out</span>
 				</a>
@@ -197,7 +197,7 @@ function toggleAddForm(id) {
 
 
 	
-	<a href="profile.php" class="profile-btn" title="Profile" aria-label="Profile">P</a>
+	<a href="<?= BASE_URL ?>/src/views/profile.php" class="profile-btn" title="Profile" aria-label="Profile">P</a>
 
 </body>
 

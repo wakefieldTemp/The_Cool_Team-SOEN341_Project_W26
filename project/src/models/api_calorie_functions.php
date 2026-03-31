@@ -1,6 +1,7 @@
 <?php
 function getCalorieTip($total_calories, $current_goal) {
     require_once __DIR__ . '/../../config/api_config.php';
+    global $ANTHROPIC_API_KEY;
     $prompt = "User ate $total_calories/$current_goal kcal today. Give a short motivational message + 1 tip. Be warm and concise.";
     $data = [
         "model" => "claude-haiku-4-5-20251001",

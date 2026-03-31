@@ -169,20 +169,20 @@ $current_goal = $goal_result ? $goal_result['daily_goal'] : null;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Page</title>
-    <link rel="stylesheet" href="/public/css/profile_page_style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?> /public/css/profile_page_style.css">
 </head>
 
 <body>
 
 <header class="site-header">
     <div class="brand">
-        <img class="logo" src="/public/images/logo.jpg" alt="Logo">
+        <img class="logo" src="<?= BASE_URL ?> /public/images/logo.jpg" alt="Logo">
 
         <div class="title">The Cool Team App</div>
     </div>
 
     <div class="back-button-container">
-        <button class="btn btn-primary" onclick="window.location.href='/src/views/main_menu.php'">
+        <button class="btn btn-primary" onclick="window.location.href='<?= BASE_URL ?>/src/views/main_menu.php'">
             Back to Main Page
         </button>
     </div>

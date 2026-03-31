@@ -144,25 +144,24 @@ $recipes = $result->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Recipes</title>
-    <link rel="stylesheet" href="/public/css/recipes_style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/recipes_style.css">
 </head>
 
 <header class="site-header">
     <div class="brand">
-        <img class="logo" src="/public/images/logo.jpg" alt="Logo">
-
+        <img class="logo" src="<?= BASE_URL ?>/public/images/logo.jpg" alt="Logo">
         <div class="title">The Cool Team App</div>
     </div>
 
     <div class="back-button-container">
-        <button class="btn btn-primary" onclick="window.location.href='/src/views/main_menu.php'">
+        <button class="btn btn-primary" onclick="window.location.href='<?= BASE_URL ?>/src/views/main_menu.php'">
             Back to Main Page
         </button>
     </div>
 </header>
 
 <body>
-    <a href="/src/views/recipe_creation.php" class="add-recipe-btn" title="Add Recipes" aria-label="Add Recipes">Add Recipes</a>
+    <a href="<?= BASE_URL ?>/src/views/recipe_creation.php" class="add-recipe-btn" title="Add Recipes" aria-label="Add Recipes">Add Recipes</a>
     <div class="card">
         <h2>My Recipes</h2>
         <div class="recipes-container">
@@ -217,7 +216,6 @@ $recipes = $result->get_result();
             </div>
             </form>
 
-
             <?php
             /*
             Basically here we're gonna go through each recipe for the current user
@@ -235,7 +233,6 @@ if ($recipes->num_rows > 0) {
         $ingredients_stmt->bind_param('i', $recipe_id);
         $ingredients_stmt->execute();
         $ingredients_result = $ingredients_stmt->get_result();
-        $ingredients_display = 'Ingredients: ';
         $ingredients = [];
         while ($ingredient = $ingredients_result->fetch_assoc()) {
             $ingredients[] = htmlspecialchars($ingredient['ingredient_name']);
@@ -265,22 +262,22 @@ if ($recipes->num_rows > 0) {
         echo '
         <div class="recipe-card" onclick="toggleRecipe(this)">
             <div class="recipe-card-summary">
-                    <h3 class="recipe-title">' . htmlspecialchars($row['recipe_name']) . '</h3>
-                    <p class="recipe-description">' . htmlspecialchars($row['description']) . '</p>
-                    <div class="recipe-info2">
-                        <span>Prep time: ' . htmlspecialchars($row['prep_time']) . ' min | </span>
-                        <span>Cook time: ' . htmlspecialchars($row['cook_time']) . ' min | </span>
-                        <span>Difficulty: ' . htmlspecialchars($row['difficulty_level']) . ' | </span>
-                        <span>Calories: ' . htmlspecialchars($row['calories']) . ' cal | </span>
-                        <span>Meal Type: ' . htmlspecialchars($row['meal_type']) . '</span>                     
-                    </div>
-                    <div class="recipe-tags">' . $tags_display . '</div>
-                    <div class="recipe-ingredients">' . $ingredients_display . '</div>
-                    <div class="recipe-steps">' . $steps_display . '</div>
+                <h3 class="recipe-title">' . htmlspecialchars($row['recipe_name']) . '</h3>
+                <p class="recipe-description">' . htmlspecialchars($row['description']) . '</p>
+                <div class="recipe-info2">
+                    <span>Prep time: ' . htmlspecialchars($row['prep_time']) . ' min | </span>
+                    <span>Cook time: ' . htmlspecialchars($row['cook_time']) . ' min | </span>
+                    <span>Difficulty: ' . htmlspecialchars($row['difficulty_level']) . ' | </span>
+                    <span>Calories: ' . htmlspecialchars($row['calories']) . ' cal | </span>
+                    <span>Meal Type: ' . htmlspecialchars($row['meal_type']) . '</span>
+                </div>
+                <div class="recipe-tags">' . $tags_display . '</div>
+                <div class="recipe-ingredients">' . $ingredients_display . '</div>
+                <div class="recipe-steps">' . $steps_display . '</div>
             </div>
 
             <div class="recipe-actions">
-                <a href="/src/views/edit_recipe.php?recipe_id=' . $recipe_id . '">Edit</a>
+                <a href="' . BASE_URL . '/src/controllers/edit_recipe.php?recipe_id=' . $recipe_id . '">Edit</a>
                 <form method="POST">
                     <input type="hidden" name="recipe_id" value="' . $recipe_id . '">
                     <button type="submit" name="delete_recipe" onclick="return confirm(\'Are you sure you want to delete this recipe?\')">Delete</button>
@@ -297,6 +294,7 @@ if ($recipes->num_rows > 0) {
     echo '<p>No recipes found. Click "Add Recipes" to create your first recipe!</p>';
 }
 ?>
+        </div>
     </div>
 
     <script>

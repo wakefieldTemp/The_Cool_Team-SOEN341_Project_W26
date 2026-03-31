@@ -1,6 +1,6 @@
 <?php
-
 session_start();
+require_once __DIR__ . '/config/login_page_config.php';
 
 // Different type of errors we can expect
 $errors = [
@@ -29,12 +29,11 @@ function showConfirmation($confirmation){
     return !empty($confirmation) ? "<p class='confirmation-message'>$confirmation</p>" : '';
 }
 
-// This is for the current active form )login or register)
+// This is for the current active form (login or register)
 function isActiveForm($formName, $activeForm){
     return $formName === $activeForm ? 'active' : '';
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang ="en">
@@ -43,34 +42,31 @@ function isActiveForm($formName, $activeForm){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Cool Team's Website</title>
-    <link rel="stylesheet" href="/public/css/login_page_style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/login_page_style.css">
 </head>
-
 
 <body>
 
-     <header class="site-header">
-         <h1 class="site-title">The Cool Team App</h1>
-     </header>
-
+    <header class="site-header">
+        <h1 class="site-title">The Cool Team App</h1>
+    </header>
 
     <div class="container">
-    <!-- This is the login form (we see the isActiveForm function call, this is to see which is active, so which one we're displaying) -->
+        <!-- This is the login form (we see the isActiveForm function call, this is to see which is active, so which one we're displaying) -->
         <div class="form-box <?= isActiveForm('login', $activeForm); ?>" id="login-form">
-            <form action="/src/controllers/login_page_register.php" method="post">
+            <form action="<?= BASE_URL ?>/src/controllers/login_page_register.php" method="post">
                 <h2>Login</h2>
                 <?= showError($errors['login']);?>
                 <?= showConfirmation($confirmations['creation']);?>
                 <input type="email" name="email" placeholder="Email" required>
                 <input type="password" name="password" placeholder="Password" required>
                 <button type="submit" name="login">Login</button>
-                <!-- The on click will call a function that will make the register form the active form  -->
-                <p>Not already signed up? Sign up <a href="#" onclick="showForm('register-form')">here</a></p>             
+                <p>Not already signed up? Sign up <a href="#" onclick="showForm('register-form')">here</a></p>
             </form>
         </div>
-        <!-- This is the registration form  -->
+        <!-- This is the registration form -->
         <div class="form-box <?= isActiveForm('register', $activeForm); ?>" id="register-form">
-            <form action="/src/controllers/login_page_register.php" method="post">
+            <form action="<?= BASE_URL ?>/src/controllers/login_page_register.php" method="post">
                 <h2>Register</h2>
                 <?= showError($errors['register']); ?>
                 <?= showError($errors['retype']); ?>
@@ -79,13 +75,12 @@ function isActiveForm($formName, $activeForm){
                 <input type="password" name="password" placeholder="Password" required>
                 <input type="password" name="retype_password" placeholder="Confirm password" required>
                 <button type="submit" name="register">Register</button>
-                <!-- The on click will call a function that will make the login form the active form  -->
-                <p>Already have an account? Login <a href="#" onclick="showForm('login-form')">here</a></p>             
+                <p>Already have an account? Login <a href="#" onclick="showForm('login-form')">here</a></p>
             </form>
         </div>
     </div>
-<!-- Include the script to take care of active form  -->  
-<script src="/public/js/login_page_script.js"></script>
+
+<script src="<?= BASE_URL ?>/public/js/login_page_script.js"></script>
 </body>
 
 </html>

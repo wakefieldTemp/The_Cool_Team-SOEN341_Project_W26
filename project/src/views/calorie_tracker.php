@@ -1,9 +1,9 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../config/api_config.php';
 require_once __DIR__ . '/../../config/login_page_config.php';
 require_once __DIR__ . '/../models/sql_calorie_functions.php';
 require_once __DIR__ . '/../models/api_calorie_functions.php';
-session_start();
 $userId = $_SESSION['user_id'];
 date_default_timezone_set('America/Toronto');
 $today = date('l');
@@ -46,7 +46,7 @@ $tip = preg_replace('/\s*```$/', '', $tip);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Calorie Tracker</title>
-    <link rel="stylesheet" href="/public/css/calorie_tracker_style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/calorie_tracker_style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
@@ -56,7 +56,7 @@ $tip = preg_replace('/\s*```$/', '', $tip);
         <p>You can add extra calories you consume, or remove calories</p>
     </div>
     <div class="back-button">
-        <a href="/src/views/main_menu.php">
+        <a href="<?= BASE_URL ?>/src/views/main_menu.php">
             <i class='bx bx-arrow-back'></i> Back to Main Menu
         </a>
     </div>

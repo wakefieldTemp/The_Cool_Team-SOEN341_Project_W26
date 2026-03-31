@@ -84,7 +84,7 @@ input {
 button {
     width: 100%;
     padding: 15px;
-    background-image: url("login_button.jpg");
+    background-image: url("/file_org/The_Cool_Team-SOEN341_Project_W26/project/public/images/login_button.jpg");
     border-radius: 10px;
     border: outset;
     margin-bottom: 10px;

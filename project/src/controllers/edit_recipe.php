@@ -2,14 +2,14 @@
 /*This whole code is legit the same as the add recipes, just we load the values that we already have for the specific
   recipe (the placeholders becomes the current values) */
 session_start();
-require_once __DIR__ . '/../config/login_page_config.php';
-require_once __DIR__ . '/../src/models/sql_recipe_functions.php';
+require_once __DIR__ . '/../../config/login_page_config.php';
+require_once __DIR__ . '/../models/sql_recipe_functions.php';
 $userId = $_SESSION['user_id'];
 
 $recipe_id = $_GET['recipe_id'] ?? null;
 
 if (!$recipe_id) {
-    header('Location: /src/views/recipes.php');
+    header('Location: ' . BASE_URL . '/src/views/recipes.php');
     exit;
 }
 
@@ -33,7 +33,7 @@ if(isset($_POST['save_recipe'])) {
 
     editRecipe($userId, $recipe_id, $recipe_name, $recipe_description, $prep_time, $cook_time, $difficulty, $calories, $gmo_free, $gluten_free, $lactose_free, $vegan, $vegetarian, $meal_type, $recipe_ingredients, $recipe_steps);
 
-    header('Location: /src/views/recipes.php');
+    header('Location: ' . BASE_URL . '/src/views/recipes.php');
     exit;
 }
 
@@ -44,7 +44,7 @@ $result->execute();
 $recipe = $result->get_result()->fetch_assoc();
 
 if (!$recipe) {
-    header('Location: /src/views/recipes.php');
+    header('Location: ' . BASE_URL . '/src/views/recipes.php');
     exit;
 }
 $ingredient_result = $conn->prepare("SELECT i.ingredient_name FROM ingredients i JOIN recipe_ingredients ri ON i.ingredient_id = ri.ingredient_id WHERE ri.recipe_id = ?");
@@ -74,7 +74,7 @@ while ($row = $step_result->fetch_assoc()) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Add Recipe</title>
 
-      <link rel="stylesheet" href="/public/css/add_recipe_style.css" />
+      <link rel="stylesheet" href="<?= BASE_URL ?> /public/css/add_recipe_style.css" />
     </head>
 
 <body>

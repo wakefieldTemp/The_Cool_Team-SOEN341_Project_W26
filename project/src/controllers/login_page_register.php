@@ -30,7 +30,7 @@ if(isset($_POST['register'])){
         $_SESSION['account_confirmation'] = 'Account successfully created';
     }
 
-    header("Location: /src/views/index.php");
+    header("Location: " . BASE_URL . "/index.php");
     exit();
 }
 
@@ -49,7 +49,7 @@ if(isset($_POST['login'])){
             $_SESSION['name'] = $user['name'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['user_id'] = $user['id'];
-            header("Location: /src/views/main_menu.php");
+            header("Location: " . BASE_URL . "/src/views/main_menu.php");
             exit();
         }
     }
@@ -58,7 +58,7 @@ if(isset($_POST['login'])){
     $_SESSION['login_error'] = 'Incorrect email or password';
     $_SESSION['active_form'] = 'login';
 
-    header("Location: /src/views/index.php");
+    header("Location: " . BASE_URL . "/index.php");
     exit();
 }
 ?>

@@ -31,7 +31,7 @@ if(isset($_POST['save_recipe'])) {
 
     addRecipe($userId, $recipe_name, $recipe_description, $prep_time, $cook_time, $difficulty, $calories, $gmo_free, $gluten_free, $lactose_free, $vegan, $vegetarian, $meal_type, $recipe_ingredients, $recipe_steps);
     // When we add a recipe, after adding it, we head back to the recipes
-    header('Location: /src/views/recipes.php');
+    header('Location: ' . BASE_URL . '/src/views/recipes.php');
     exit;
 }
 
@@ -43,14 +43,14 @@ if(isset($_POST['save_recipe'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Add Recipe</title>
 
-  <link rel="stylesheet" href="/public/css/add_recipe_style.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?> /public/css/add_recipe_style.css" />
 </head>
 
 <body>
 
 <header class="site-header">
   <div class="brand">
-    <img class="logo" src="/public/images/logo.jpg" alt="Logo">
+    <img class="logo" src="<?= BASE_URL ?> /public/images/logo.jpg" alt="Logo">
     <div class="title">The Cool Team App</div>
   </div>
 

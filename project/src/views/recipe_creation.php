@@ -26,7 +26,7 @@ if(isset($_POST['save_recipe'])) {
 
     addRecipe($userId, $name, $description, $prep_time, $cook_time, $difficulty, $calories, $gmo_free, $gluten_free, $lactose_free, $vegan, $vegetarian, $meal_type, $recipe['ingredients'], $recipe['steps']);
 
-    header("Location: recipes.php");
+    header("Location: " . BASE_URL . "/src/views/recipes.php");
     exit();
 }
 
@@ -49,12 +49,12 @@ if(isset($_POST['create_recipe'])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Recipe Creation</title>
-    <link rel="stylesheet" href="/public/css/recipe_creation_style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/recipe_creation_style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
     <div class="menu-button">
-        <a href="/src/views/main_menu.php">
+        <a href="<?= BASE_URL ?>/src/views/main_menu.php">
             <i class='bx bx-arrow-back'></i> Back to Main Menu
         </a>
     </div>
