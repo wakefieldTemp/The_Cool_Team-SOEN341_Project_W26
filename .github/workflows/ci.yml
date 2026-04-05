@@ -74,6 +74,9 @@ jobs:
             echo "No composer.json found; skipping composer install."
           fi
 
+      - name: Fix phpunit permissions
+        run: chmod +x ./vendor/bin/phpunit
+
       - name: Running phpunit
         run: ./vendor/bin/phpunit tests
 
