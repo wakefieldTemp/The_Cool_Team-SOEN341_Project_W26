@@ -50,4 +50,23 @@ function deleteAllergy($allergy_id, $userId){
     $delete_stmt->bind_param('ii', $userId, $allergy_id);
     $delete_stmt->execute();
 }
+
+function getAllergies($userId){
+    global $conn;
+    /* This section is for displaying the allergies and preferences
+    Basically we get the information (ids) of allergies and preferences using a query with the user id*/
+    $sql_query = "
+        SELECT al.allergy_id, al.allergy
+        FROM user_allergies ual
+        JOIN allergies al ON ual.allergy_id = al.allergy_id
+        WHERE ual.user_id = ?
+        ORDER BY al.allergy
+    ";
+
+    $stmt = $conn->prepare($sql_query);
+    $stmt->bind_param('i', $userId);  // 'i' for integer
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
 ?>

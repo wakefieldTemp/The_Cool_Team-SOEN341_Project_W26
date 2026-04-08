@@ -54,4 +54,23 @@ function getDailyGoal($conn, $userId) {
     return $goal_row['daily_goal'] ?? 0;
 }
 
+function setGoal($userId, $daily_goal) {
+    global $conn;
+    $goal_stmt = $conn->prepare("
+        INSERT INTO calorie_goals (user_id, daily_goal)
+        VALUES (?, ?)
+        ON DUPLICATE KEY UPDATE daily_goal = ?
+    ");
+    $goal_stmt->bind_param('iii', $userId, $daily_goal, $daily_goal);
+    $goal_stmt->execute();
+}
+
+function getCurrentGoal($userId){
+    global $conn;
+    $goal_query = $conn->prepare("SELECT daily_goal FROM calorie_goals WHERE user_id = ?");
+    $goal_query->bind_param('i', $userId);
+    $goal_query->execute();
+    $goal_result = $goal_query->get_result()->fetch_assoc();
+    return $goal_result ? $goal_result['daily_goal'] : null;
+}
 ?>
