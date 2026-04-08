@@ -1,8 +1,6 @@
 <?php
 function addAllergy($allergy_name, $userId){
     global $conn;
-    
-
     // Creat SQL query to add the allergy to the table
     $first_query = "SELECT allergy_id FROM allergies WHERE allergy = ?";
     $first_result = $conn->prepare($first_query);

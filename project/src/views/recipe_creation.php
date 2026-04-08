@@ -150,4 +150,47 @@
 </body>
 </html>
 
-<script src="<?= BASE_URL ?>/public/js/recipes_script.js"></script>
+<script>
+    function checkIngredient(ingredientName) {
+        const tbody = document.getElementById('ingredients-tbody');
+        const rows = tbody.getElementsByTagName('tr');
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i].cells[0].innerText === ingredientName) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function removeIngredient(btn) {
+        btn.closest('tr').remove();
+    }
+
+    document.getElementById('add_ingredient').addEventListener('click', function () {
+        const ingredientInput = document.getElementById('ingredient_name');
+        const ingredientName = ingredientInput.value.trim();
+        if (ingredientName !== '' && !checkIngredient(ingredientName)) {
+            const tbody = document.getElementById('ingredients-tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${ingredientName}</td>
+                <td><button type="button" class="btn btn-danger remove-ingredient" onclick="removeIngredient(this)">Remove</button></td>
+            `;
+            tbody.appendChild(row);
+            ingredientInput.value = '';
+        }
+    });
+
+    document.getElementById('main-form').addEventListener('submit', function (event) {
+        const ingredientRows = document.getElementById('ingredients-tbody').getElementsByTagName('tr');
+        const ingredients = Array.from(ingredientRows).map(row => row.cells[0].innerText);
+        document.getElementById('ingredients_input').value = JSON.stringify(ingredients);
+    });
+
+    const btnCancel = document.getElementById('btn-cancel');
+    if (btnCancel) {
+        btnCancel.addEventListener('click', function () {
+            document.getElementById('recipe-result').style.display = 'none';
+        });
+    }
+</script>

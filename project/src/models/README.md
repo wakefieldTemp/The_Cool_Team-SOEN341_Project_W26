@@ -4,11 +4,13 @@ This folder contains PHP files with reusable functions for database queries and 
 
 ## Files
 
-### `sql_recipe_functions.php`
-Functions for managing recipes in the database.
-- `addRecipe()` — inserts a new recipe with ingredients and steps
-- `editRecipe()` — updates an existing recipe, replacing its ingredients and steps
-- `createRecipe()` — calls the Claude API to generate a recipe from a list of ingredients
+### `api_calorie_functions.php`
+Wrapper for the Claude API calorie tip feature.
+- `getCalorieTip()` — sends the user's calorie data to the API and returns a motivational message
+
+### `sql_allergy_functions.php`
+Functions for managing the user's allergy information in the database.
+- Handles inserting, updating, and retrieving allergy records tied to the user's profile
 
 ### `sql_calorie_functions.php`
 Functions for managing the calorie tracker.
@@ -23,9 +25,15 @@ Functions for managing the weekly meal schedule.
 - `deleteMealFromSchedule()` — removes a meal from the schedule
 - `getMealsForSchedule()` — fetches all scheduled meals for a user
 
-### `api_calorie_functions.php`
-Wrapper for the Claude API calorie tip feature.
-- `getCalorieTip()` — sends the user's calorie data to the API and returns a motivational message
+### `sql_preference_functions.php`
+Functions for managing the user's dietary preferences in the database.
+- Handles inserting, updating, and retrieving preference records tied to the user's profile
+
+### `sql_recipe_functions.php`
+Functions for managing recipes in the database.
+- `addRecipe()` — inserts a new recipe with ingredients and steps
+- `editRecipe()` — updates an existing recipe, replacing its ingredients and steps
+- `createRecipe()` — calls the Claude API to generate a recipe from a list of ingredients
 
 ## Notes
 
