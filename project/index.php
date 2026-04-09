@@ -1,6 +1,10 @@
 <?php
 session_start();
 require_once __DIR__ . '/config/login_page_config.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use ParagonIE\AntiCSRF\AntiCSRF;
+$csrf = new AntiCSRF();
 
 // Different type of errors we can expect
 $errors = [
@@ -55,6 +59,7 @@ function isActiveForm($formName, $activeForm){
         <!-- This is the login form (we see the isActiveForm function call, this is to see which is active, so which one we're displaying) -->
         <div class="form-box <?= isActiveForm('login', $activeForm); ?>" id="login-form">
             <form action="<?= BASE_URL ?>/src/controllers/login_page_register.php" method="post">
+                <?= $csrf->insertToken() ?>
                 <h2>Login</h2>
                 <?= showError($errors['login']);?>
                 <?= showConfirmation($confirmations['creation']);?>
@@ -67,6 +72,7 @@ function isActiveForm($formName, $activeForm){
         <!-- This is the registration form -->
         <div class="form-box <?= isActiveForm('register', $activeForm); ?>" id="register-form">
             <form action="<?= BASE_URL ?>/src/controllers/login_page_register.php" method="post">
+                <?= $csrf->insertToken() ?>
                 <h2>Register</h2>
                 <?= showError($errors['register']); ?>
                 <?= showError($errors['retype']); ?>

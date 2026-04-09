@@ -9,5 +9,17 @@
   },
   "scripts": {
     "test": "phpunit"
+  },
+  "require": {
+    "paragonie/anti-csrf": "^2.4",
+    "anthropic-ai/sdk": "^0.8.0",
+    "symfony/http-client": "^7.4",
+    "nyholm/psr7": "^1.8",
+    "respect/validation": "^2.4"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
   }
 }

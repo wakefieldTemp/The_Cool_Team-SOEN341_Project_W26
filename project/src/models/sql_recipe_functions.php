@@ -256,44 +256,23 @@ function createRecipe($userId, $recipe_ingredients_string, $meal_type){
     - Output JSON only.
     ";
 
-    $data = [
-        "model" => "claude-haiku-4-5-20251001",
-        "max_tokens" => 1000,
-        "messages" => [
-            [
-                "role" => "user",
-                "content" => $prompt
-            ]
-        ]
-    ];
+    $client = Anthropic::client($ANTHROPIC_API_KEY);
 
-    $ch = curl_init("https://api.anthropic.com/v1/messages");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Content-Type: application/json",
-        "x-api-key: " . $ANTHROPIC_API_KEY,
-        "anthropic-version: 2023-06-01"
+    $response = $client->messages()->create([
+        'model' => 'claude-haiku-4-5-20251001',
+        'max_tokens' => 1000,
+        'messages' => [
+            ['role' => 'user', 'content' => $prompt]
+        ],
     ]);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
-    $response = curl_exec($ch);
-    if ($response === false) {
-        die("cURL error: " . curl_error($ch));
-    }
-    curl_close($ch);
+    $recipeJson = $response->content[0]->text;
 
-    $result = json_decode($response, true);
-
-    if (!isset($result['content'][0]['text'])) {
-        die("<pre>API Error: " . htmlspecialchars($response) . "</pre>");
-    }
-
-    $recipeJson = $result['content'][0]['text'];
+    // Clean up any markdown formatting just in case
     $recipeJson = preg_replace('/^```(?:json)?\s*/i', '', trim($recipeJson));
     $recipeJson = preg_replace('/\s*```$/', '', $recipeJson);
 
     $recipe = json_decode($recipeJson, true);
-    return $recipe;
+    return $recipe ?? null;
 }
 ?>
