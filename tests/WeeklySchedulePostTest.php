@@ -10,7 +10,7 @@ final class WeeklySchedulePostTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sourceFile = __DIR__ . '/../Sprint Planning/Code/your_file.php';
+        $this->sourceFile = __DIR__ . '/../project/src/controllers/main_menu_post.php';
         $this->assertFileExists($this->sourceFile, 'Update $sourceFile to the real script path.');
     }
 
