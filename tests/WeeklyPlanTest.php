@@ -45,7 +45,6 @@ PHP;
         $args = json_decode((string) file_get_contents($logFile), true);
         $this->assertIsArray($args);
 
-        // [conn_marker, userId, recipeId, day, mealType]
         $this->assertSame('fake-conn', $args[0]);
         $this->assertSame(14, $args[1]);
         $this->assertSame(25, $args[2]);
@@ -125,6 +124,43 @@ PHP;
         $this->assertSame('Apple Toast', $recipeList[0]['recipe_name']);
         $this->assertSame(102, $recipeList[1]['recipe_id']);
         $this->assertSame('Veggie Pasta', $recipeList[1]['recipe_name']);
+    }
+
+    public function testAddMealToSchedulePreventsDuplicateMealsAndSetsSessionError(): void
+    {
+        $sandbox = $this->makeDuplicateSandbox();
+
+        $runner = <<<'PHP'
+<?php
+error_reporting(E_ERROR | E_PARSE);
+
+session_start();
+
+require __DIR__ . '/app/models/sql_meals_functions.php';
+
+$conn = new FakeConnWithDuplicate();
+
+addMealToSchedule($conn, 5, 22, 'Monday', 'Lunch');
+
+file_put_contents(__DIR__ . '/duplicate_result.json', json_encode([
+    'session_error' => $_SESSION['duplicate_error'] ?? null,
+    'insert_executed' => file_exists(__DIR__ . '/insert_executed.txt'),
+], JSON_PRETTY_PRINT));
+PHP;
+
+        file_put_contents($sandbox . '/runner_duplicate.php', $runner);
+
+        exec(PHP_BINARY . ' ' . escapeshellarg($sandbox . '/runner_duplicate.php'), $output, $exitCode);
+        $this->assertSame(0, $exitCode, implode("\n", $output));
+
+        $resultFile = $sandbox . '/duplicate_result.json';
+        $this->assertFileExists($resultFile);
+
+        $result = json_decode((string) file_get_contents($resultFile), true);
+        $this->assertIsArray($result);
+
+        $this->assertSame('You already have this recipe in your schedule.', $result['session_error']);
+        $this->assertFalse($result['insert_executed']);
     }
 
     private function makeSandbox(): string
@@ -239,6 +275,80 @@ function getMealsForSchedule($conn, $userId)
             'recipe_id' => 202,
         ],
     ]);
+}
+PHP);
+
+        return $dir;
+    }
+
+    private function makeDuplicateSandbox(): string
+    {
+        $dir = sys_get_temp_dir() . '/weekly_plan_duplicate_test_' . bin2hex(random_bytes(6));
+
+        mkdir($dir, 0777, true);
+        mkdir($dir . '/app/models', 0777, true);
+
+        file_put_contents($dir . '/app/models/sql_meals_functions.php', <<<'PHP'
+<?php
+
+function addMealToSchedule($conn, $userId, $recipe_id, $day, $meal_type){
+    $check = $conn->prepare("SELECT schedule_id FROM meal_schedule WHERE user_id=? AND (recipe_id=? OR (day_of_week=? AND meal_type=?))");
+    $check->bind_param('iiss', $userId, $recipe_id, $day, $meal_type);
+    $check->execute();
+    $check->store_result();
+
+    if ($check->num_rows === 0) {
+        $ins = $conn->prepare("INSERT INTO meal_schedule (user_id, recipe_id, day_of_week, meal_type) VALUES (?,?,?,?)");
+        $ins->bind_param('iiss', $userId, $recipe_id, $day, $meal_type);
+        $ins->execute();
+    } else {
+        $_SESSION['duplicate_error'] = "You already have this recipe in your schedule.";
+    }
+}
+
+class FakeDuplicateCheckStmt
+{
+    public int $num_rows = 1;
+
+    public function bind_param($types, &...$vars): void
+    {
+    }
+
+    public function execute(): void
+    {
+    }
+
+    public function store_result(): void
+    {
+    }
+}
+
+class FakeInsertStmt
+{
+    public function bind_param($types, &...$vars): void
+    {
+    }
+
+    public function execute(): void
+    {
+        file_put_contents(__DIR__ . '/../../insert_executed.txt', 'yes');
+    }
+}
+
+class FakeConnWithDuplicate
+{
+    public function prepare(string $sql)
+    {
+        if (strpos($sql, 'SELECT schedule_id FROM meal_schedule') !== false) {
+            return new FakeDuplicateCheckStmt();
+        }
+
+        if (strpos($sql, 'INSERT INTO meal_schedule') !== false) {
+            return new FakeInsertStmt();
+        }
+
+        return new FakeDuplicateCheckStmt();
+    }
 }
 PHP);
 
